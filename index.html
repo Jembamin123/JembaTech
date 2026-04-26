@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jemba Tech – Armado y Mantención de PC</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #050f05;
+    --bg2: #0a1a0a;
+    --card: rgba(0,30,0,0.75);
+    --text: #e0ffe0;
+    --muted: #7acc7a;
+    --accent: #39ff14;
+    --accent2: #39ff14;
+    --border: rgba(57,255,20,0.25);
+    --glow: 0 0 20px rgba(57,255,20,0.4);
+    --nav: rgba(5,15,5,0.92);
+  }
+  :root[data-theme="light"] {
+    --bg: #f0feff;
+    --bg2: #e0fafc;
+    --card: rgba(255,255,255,0.9);
+    --text: #003340;
+    --muted: #007a8a;
+    --accent: #00e5ff;
+    --accent2: #39ff14;
+    --border: rgba(0,229,255,0.35);
+    --glow: 0 0 20px rgba(0,229,255,0.5);
+    --nav: rgba(240,254,255,0.95);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* ─── CIRCUIT CANVAS ─── */
+  #circuit-bg {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: none;
+    display: flex; align-items: center; justify-content: flex-start;
+    padding: 1.5rem 2rem;
+    transition: all 0.4s;
+    pointer-events: none;
+  }
+  nav.scrolled {
+    background: transparent;
+    border-bottom: none;
+    backdrop-filter: none;
+  }
+  .nav-logo {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.4s;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  nav.scrolled .nav-logo {
+    display: flex;
+    opacity: 1;
+  }
+  .nav-logo img {
+    width: 56px; height: 56px;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    object-fit: contain;
+  }
+  nav.scrolled .nav-logo img { opacity: 1; }
+  .nav-logo:hover img { transform: scale(1.08); }
+  .nav-logo span { display: none; }
+  .nav-links { display: none; }
+  .nav-links a { display: none; }
+
+  /* ─── RADIAL MENU ─── */
+  .menu-toggle {
+    display: none;
+  }
+  .menu-toggle span {
+    display: none;
+  }
+
+  /* ─── SIDEBAR MENU ─── */
+  .sidebar {
+    position: fixed; left: 1rem; top: 50%; transform: translateY(-50%);
+    z-index: 150;
+    width: auto;
+    pointer-events: auto;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  
+  .sidebar-item {
+    position: relative;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: auto;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    overflow: hidden;
+    width: 46px;
+    white-space: nowrap;
+    backdrop-filter: blur(8px);
+    text-decoration: none;
+  }
+  .sidebar-item:hover {
+    background: rgba(0,0,0,0.28);
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+    transform: translateX(4px);
+    width: 170px;
+    gap: 0.75rem;
+  }
+  .sidebar-item svg {
+    width: 18px; height: 18px;
+    stroke: var(--accent); fill: none; stroke-width: 2;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+  }
+  .sidebar-item:hover svg { transform: scale(1.15); }
+
+  .sidebar-label {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: opacity 0.25s 0.05s, max-width 0.3s;
+    pointer-events: none;
+  }
+  .sidebar-item:hover .sidebar-label {
+    opacity: 1;
+    max-width: 120px;
+  }
+
+  #theme-toggle {
+    background: none; border: none; color: var(--accent);
+    padding: 0; border-radius: 50%; cursor: pointer;
+    font-size: 1.5rem; transition: all 0.3s; width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #theme-toggle:hover { transform: scale(1.1); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 6rem 1.5rem 4rem;
+  }
+  .hero-logo {
+    width: 340px; height: 340px;
+    object-fit: contain; margin-bottom: 2rem;
+    border-radius: 0;
+    filter: drop-shadow(0 0 30px rgba(57,255,20,0.4));
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 40px rgba(57,255,20,0.5), 0 0 80px rgba(57,255,20,0.2); }
+    50% { box-shadow: 0 0 60px rgba(57,255,20,0.8), 0 0 120px rgba(57,255,20,0.4); }
+  }
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(57,255,20,0.5);
+    letter-spacing: 4px;
+    line-height: 1.1;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero .tagline {
+    margin-top: 1rem;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 2.5rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.85rem 2rem; border-radius: 4px;
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem; letter-spacing: 2px;
+    text-decoration: none; font-weight: 700; transition: all 0.3s; cursor: pointer; border: none;
+  }
+  .btn-primary {
+    background: var(--accent); color: #000;
+    box-shadow: 0 0 20px rgba(57,255,20,0.4);
+  }
+  .btn-primary:hover { box-shadow: 0 0 40px rgba(57,255,20,0.7); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: var(--accent);
+    border: 2px solid var(--accent);
+  }
+  .btn-outline:hover { background: var(--accent); color: #000; box-shadow: var(--glow); transform: translateY(-2px); }
+
+  /* ─── SECTION COMMON ─── */
+  section { position: relative; z-index: 1; padding: 5rem 1.5rem; }
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: var(--accent);
+    text-align: center;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+  }
+  .section-sub { text-align: center; color: var(--muted); margin-bottom: 3rem; letter-spacing: 2px; font-size: 0.9rem; }
+  .divider {
+    width: 80px; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 0.75rem auto 0;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* ─── SERVICES ─── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    transition: all 0.35s;
+    backdrop-filter: blur(10px);
+    position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0); transition: transform 0.4s;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(57,255,20,0.15); border-color: var(--accent); }
+  .service-icon {
+    font-size: 2.5rem; margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px;
+  }
+  .service-icon svg {
+    width: 40px; height: 40px; stroke: var(--accent); fill: none; stroke-width: 2;
+  }
+  .service-card h3 { font-family: 'Orbitron', sans-serif; color: var(--accent2); margin-bottom: 0.75rem; font-size: 1rem; letter-spacing: 1px; }
+  .service-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+  /* ─── WHY US ─── */
+  #why { background: var(--bg2); }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+  .why-item { text-align: center; }
+  .why-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem; font-weight: 900;
+    color: var(--accent); text-shadow: var(--glow);
+  }
+  .why-item p { color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; letter-spacing: 1px; }
+
+  /* ─── GALLERY / CAROUSEL ─── */
+  #gallery { background: var(--bg); }
+
+  .carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 60px rgba(57,255,20,0.08);
+    margin-top: 2rem;
+    height: 500px; /* altura fija para llenar bien el panel */
+  }
+
+  .carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #080f08;
+  }
+
+  [data-theme="light"] .carousel-slide {
+    background: #0a1520;
+  }
+
+  @media (max-width: 768px) {
+    .carousel-wrapper { height: 260px; }
+  }
+
+  .carousel-slide img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 12px;
+    transition: transform 0.5s ease;
+  }
+
+  .carousel-slide:hover img { transform: scale(1.015); }
+
+  /* Overlay gradient solo en la parte inferior para el contador */
+  .carousel-slide::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Slide counter badge */
+  .carousel-counter {
+    position: absolute;
+    bottom: 1.5rem; right: 1.5rem;
+    z-index: 10;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    background: rgba(0,0,0,0.65);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    backdrop-filter: blur(6px);
+  }
+
+  /* Arrow buttons */
+  .carousel-btn {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(0,0,0,0.55);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    backdrop-filter: blur(6px);
+  }
+  .carousel-btn:hover {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 25px rgba(57,255,20,0.5);
+  }
+  .carousel-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+  .carousel-btn.prev { left: 1rem; }
+  .carousel-btn.next { right: 1rem; }
+
+  /* Dots */
+  .carousel-dots {
+    display: flex; gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .carousel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: 1px solid rgba(57,255,20,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+  .carousel-dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(57,255,20,0.6);
+    transform: scale(1.3);
+  }
+
+  /* Thumbnails strip */
+  .carousel-thumbs {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+  }
+  .carousel-thumbs::-webkit-scrollbar { height: 4px; }
+  .carousel-thumbs::-webkit-scrollbar-track { background: transparent; }
+  .carousel-thumbs::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  .carousel-thumb {
+    flex-shrink: 0;
+    width: 72px; height: 52px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s;
+    opacity: 0.5;
+  }
+  .carousel-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .carousel-thumb.active {
+    border-color: var(--accent);
+    opacity: 1;
+    box-shadow: 0 0 12px rgba(57,255,20,0.4);
+  }
+  .carousel-thumb:hover { opacity: 0.85; }
+
+  /* ─── WORK MODAL — MARKETPLACE STYLE ─── */
+  .work-modal {
+    display: none;
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.88);
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(12px);
+    padding: 1rem;
+  }
+  .work-modal.open { display: flex; }
+
+  .work-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(57,255,20,0.15);
+    animation: cardIn 0.38s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 460px;
+  }
+  :root[data-theme="light"] .work-card {
+    box-shadow: 0 8px 60px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.25);
+  }
+  @keyframes cardIn {
+    from { opacity:0; transform: scale(0.88) translateY(20px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  /* Imagen: panel izquierdo completo */
+  .work-card-img {
+    width: 100%; height: 100%;
+    min-height: 360px;
+    object-fit: contain;
+    background: #060c06;
+    display: block;
+    border-right: 1px solid var(--border);
+  }
+  [data-theme="light"] .work-card-img { background: #0a1520; }
+
+  /* Info: panel derecho */
+  .work-card-body {
+    padding: 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  /* Tipo de servicio — chip estilo tag */
+  .work-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 2.5px;
+    color: #000;
+    background: var(--accent);
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+    width: fit-content;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+  }
+
+  .work-card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 1px;
+    line-height: 1.3;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Divisor */
+  .work-card-divider {
+    width: 40px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin: 0.5rem 0;
+  }
+
+  .work-card-quote {
+    border-left: 3px solid var(--accent2, var(--accent));
+    padding-left: 1rem;
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .work-card-desc {
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.75;
+    opacity: 0.82;
+    margin-top: 0.25rem;
+  }
+
+  /* Botón cerrar */
+  .work-card-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: rgba(0,0,0,0.5); border: 1.5px solid var(--accent);
+    color: var(--accent); width: 36px; height: 36px;
+    border-radius: 50%; font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 2;
+  }
+  .work-card-close:hover { background: var(--accent); color: #000; }
+
+  /* Mobile: apilado vertical */
+  @media (max-width: 650px) {
+    .work-card { grid-template-columns: 1fr; min-height: auto; }
+    .work-card-img { min-height: 220px; border-right: none; border-bottom: 1px solid var(--border); }
+    .work-card-body { padding: 1.25rem; }
+  }
+
+  /* Swipe hint */
+  @media (max-width: 600px) {
+    .carousel-btn { width: 40px; height: 40px; }
+    .carousel-btn.prev { left: 0.5rem; }
+    .carousel-btn.next { right: 0.5rem; }
+  }
+
+  /* ─── CONTACT ─── */
+  #contact { background: var(--bg2); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+  @media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-info h3 { font-family: 'Orbitron', sans-serif; color: var(--accent2); margin-bottom: 1.5rem; letter-spacing: 2px; }
+  .contact-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--card);
+    margin-bottom: 1rem; transition: all 0.3s;
+    text-decoration: none; color: var(--text);
+  }
+  .contact-item:hover { border-color: var(--accent); box-shadow: var(--glow); transform: translateX(4px); }
+  .contact-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+  }
+  .contact-icon svg {
+    width: 24px; height: 24px; stroke: var(--accent); fill: currentColor; stroke-width: 1.5;
+  }
+  .contact-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .contact-val { font-family: 'Orbitron', sans-serif; font-size: 0.95rem; color: var(--accent); }
+
+  /* Form */
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.85rem 1rem; border-radius: 6px;
+    font-family: 'Exo 2', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border 0.3s, box-shadow 0.3s;
+    backdrop-filter: blur(6px);
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: var(--accent); box-shadow: var(--glow);
+  }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-group select option { background: var(--bg); }
+  .form-label { display: block; color: var(--muted); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 0.4rem; text-transform: uppercase; }
+  .form-submit { margin-top: 0.5rem; }
+  #form-msg { text-align: center; color: var(--accent); font-size: 0.9rem; margin-top: 0.5rem; min-height: 1.2em; letter-spacing: 1px; }
+
+  /* ─── WHATSAPP FAB ─── */
+  .fab-container {
+    position: fixed; right: 2rem; bottom: 2rem; z-index: 200;
+    display: flex; flex-direction: column; gap: 1rem; align-items: center;
+  }
+  .theme-fab {
+    background: var(--card); border: 2px solid var(--accent);
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(57,255,20,0.2);
+  }
+  .theme-fab svg {
+    width: 28px; height: 28px; stroke: var(--accent); fill: none; stroke-width: 2;
+  }
+  .theme-fab:hover { box-shadow: 0 4px 25px rgba(57,255,20,0.4); }
+  .wa-fab {
+    background: #25d366; color: #fff;
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; text-decoration: none;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+    animation: wa-bounce 2s ease-in-out infinite;
+    transition: transform 0.2s;
+  }
+  .wa-fab:hover { transform: scale(1.15); }
+  @keyframes wa-bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .wa-fab svg { width: 32px; height: 32px; fill: #fff; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative; z-index: 1;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    text-align: center; padding: 2rem 1rem;
+    color: var(--muted); font-size: 0.85rem; letter-spacing: 1px;
+  }
+  footer span { color: var(--accent); }
+
+  /* ─── SCAN LINE ─── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 999;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 4px
+    );
+  }
+
+  /* ─── RESPONSIVE NAV ─── */
+  @media (max-width: 640px) {
+    .nav-links a:not(:last-child):not(.btn) { display: none; }
+    nav { padding: 0.75rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Circuit BG Canvas -->
+<canvas id="circuit-bg"></canvas>
+
+<!-- Nav -->
+<nav id="mainNav"></nav>
+
+<!-- Sidebar Menu -->
+<div class="sidebar" id="sidebar">
+  <a class="sidebar-item" href="#">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="sidebar-label">INICIO</span>
+  </a>
+  <a class="sidebar-item" href="#services">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 11h6M9 15h6"/></svg>
+    <span class="sidebar-label">SERVICIOS</span>
+  </a>
+  <a class="sidebar-item" href="#why">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="sidebar-label">SOBRE MÍ</span>
+  </a>
+  <a class="sidebar-item" href="#gallery">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span class="sidebar-label">TRABAJOS</span>
+  </a>
+  <a class="sidebar-item" href="#contact">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="sidebar-label">CONTACTO</span>
+  </a>
+</div>
+
+<!-- Menu Toggle -->
+<div class="menu-toggle" id="menuToggle">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <img class="hero-logo" src="./Jemba Tech Logo Circular.png" alt="Jemba Tech Logo">
+  <h1><span>JEMBA</span> TECH</h1>
+  <p class="tagline">Armado · Mantención · Upgrade de PC's</p>
+  <p style="color:var(--muted);margin-top:0.5rem;letter-spacing:2px;font-size:0.9rem">Santiago / Valparaíso</p>
+  <div class="hero-btns">
+    <a href="https://wa.me/56973752851?text=Hola%20Jemba%20Tech!%20Me%20interesa%20una%20cotizaci%C3%B3n" class="btn btn-primary" target="_blank">Cotizar por WhatsApp</a>
+    <a href="#services" class="btn btn-outline">VER SERVICIOS</a>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services">
+  <div class="container">
+    <h2 class="section-title">SERVICIOS</h2>
+    <div class="divider"></div>
+    <p class="section-sub">TODO LO QUE TU PC NECESITA</p>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 17h20"/></svg></div>
+        <h3>ARMADO DE PC</h3>
+        <p>Construimos tu equipo a medida según tu presupuesto y necesidades: gaming, trabajo, diseño o programación. Selección de componentes, ensamblaje y prueba de estrés incluidos.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"/><path d="M9 20h6"/></svg></div>
+        <h3>COTIZACIONES</h3>
+        <p>Asesoría personalizada para armar tu PC ideal. Comparamos precios del mercado chileno y te entregamos la mejor relación calidad/precio sin compromiso de compra.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M14.4 14.3L9.7 9.6"/><path d="M18.9 10.1a4.5 4.5 0 0 1-6.4-6.4"/><path d="M5.1 13.9a4.5 4.5 0 0 1 6.4 6.4"/><circle cx="12" cy="12" r="10"/></svg></div>
+        <h3>MANTENCIÓN</h3>
+        <p>Limpieza profunda, cambio de pasta térmica, revisión de hardware, diagnóstico de fallas, formateo y reinstalación de sistema operativo. Tu PC como nueva.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M10 19H5c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2h4V3c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v2h4c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2h-5v2c0 1.1-.9 2-2 2h-2c-1.1 0-2-.9-2-2v-2z"/></svg></div>
+        <h3>UPGRADE</h3>
+        <p>¿Tu PC se quedó corto? Mejoramos RAM, almacenamiento SSD/NVMe, GPU o CPU para que tu equipo rinda al máximo sin tener que cambiar todo.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+        <h3>DIAGNÓSTICO</h3>
+        <p>Identificamos el problema exacto de tu equipo: pantallazos azules, recalentamiento, arranques fallidos, componentes quemados. Presupuesto sin costo.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v3h18V5zm0 5H3v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9z"/><rect x="2" y="16" width="20" height="2"/></svg></div>
+        <h3>PC GAMER</h3>
+        <p>Especialistas en builds de alto rendimiento para gaming. Cable management, iluminación RGB, cooling personalizado y benchmarks para que aproveches cada frame.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Us -->
+<section id="why">
+  <div class="container">
+    <h2 class="section-title">¿POR QUÉ YO?</h2>
+    <div class="divider"></div>
+    <p class="section-sub">MIS NÚMEROS</p>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="why-num">905+</div>
+        <p>Seguidores que confían en mí</p>
+      </div>
+      <div class="why-item">
+        <div class="why-num">20+</div>
+        <p>Trabajos que he realizado</p>
+      </div>
+      <div class="why-item">
+        <div class="why-num">100%</div>
+        <p>Mi compromiso con cada cliente</p>
+      </div>
+      <div class="why-item">
+        <div class="why-num">2</div>
+        <p>Zonas de cobertura: Stgo & Valparaíso</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:3rem;">
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+        <h3>GARANTÍA EN MANO DE OBRA</h3>
+        <p>Todo trabajo que realizo tiene garantía. Si algo falla en mi trabajo, lo solucionamos sin costo adicional.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8c0-1.1-.9-2-2-2h-2V4c0-.55-.45-1-1-1h-2c-.55 0-1 .45-1 1v2H9V4c0-.55-.45-1-1-1H6c-.55 0-1 .45-1 1v2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2zm0 6H3c-1.1 0-2 .9-2 2v2h20v-2c0-1.1-.9-2-2-2z"/></svg></div>
+        <h3>COMPONENTES ORIGINALES</h3>
+        <p>Trabajo solo con piezas de proveedores confiables del mercado chileno. Sin partes de segunda mano sin informar.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6 0-8 3-8 3v7h16v-7s-2-3-8-3z"/></svg></div>
+        <h3>ATENCIÓN PERSONALIZADA</h3>
+        <p>No eres un ticket de soporte. Te acompaño durante todo el proceso con comunicación directa y transparente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Carousel -->
+<section id="gallery">
+  <div class="container">
+    <h2 class="section-title">TRABAJOS QUE HE REALIZADO</h2>
+    <div class="divider"></div>
+    <p class="section-sub">CLIENTES SATISFECHOS · HAZ CLIC PARA AMPLIAR</p>
+
+    <div class="carousel-wrapper" id="carousel">
+      <!-- Track -->
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide"><img src="./Feedback/20200911_172331.jpg" alt="Trabajo 1" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/20220712_153324.jpg" alt="Trabajo 2" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/20220714_132819.jpg" alt="Trabajo 3" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_622149211_18074393702091806_7019796454176246559_n.jpg" alt="Trabajo 4" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_649393137_17978679602825836_1167495615100214261_n.jpg" alt="Trabajo 5" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_650732347_18071241107204990_4165742315428070953_n.jpg" alt="Trabajo 6" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_652312101_18112753729669966_5907132694303239556_n.jpg" alt="Trabajo 7" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_652843846_18110027842753258_5339563256197555192_n.jpg" alt="Trabajo 8" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_653363037_18082775180353377_7455241835060939604_n.jpg" alt="Trabajo 9" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_655226020_18094345324843970_8152732067528020249_n.jpg" alt="Trabajo 10" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2021-07-26 at 14.22.47.jpeg" alt="Trabajo 11" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2021-07-26 at 14.42.48.jpeg" alt="Trabajo 12" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2026-04-26 at 02.11.11 (1).jpeg" alt="Trabajo 13" loading="lazy"></div>
+        <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2026-04-26 at 02.11.11.jpeg" alt="Trabajo 14" loading="lazy"></div>
+      </div>
+      <!-- Arrows -->
+      <button class="carousel-btn prev" id="carPrev" aria-label="Anterior">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="carousel-btn next" id="carNext" aria-label="Siguiente">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <!-- Counter -->
+      <div class="carousel-counter" id="carCounter">1 / 14</div>
+    </div>
+
+    <!-- Dots -->
+    <div class="carousel-dots" id="carDots"></div>
+
+    <!-- Thumbnails -->
+    <div class="carousel-thumbs" id="carThumbs"></div>
+  </div>
+
+  <!-- Work Modal -->
+  <div class="work-modal" id="workModal">
+    <div class="work-card" id="workCard">
+      <img class="work-card-img" id="modalImg" src="" alt="">
+      <div class="work-card-body">
+        <button class="work-card-close" id="modalClose">✕</button>
+        <div class="work-card-tag" id="modalTag">TRABAJO REALIZADO</div>
+        <div class="work-card-title" id="modalTitle"></div>
+        <div class="work-card-divider"></div>
+        <blockquote class="work-card-quote" id="modalQuote"></blockquote>
+        <p class="work-card-desc" id="modalDesc"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="container">
+    <h2 class="section-title">CONTACTO</h2>
+    <div class="divider"></div>
+    <p class="section-sub">ESCRÍBENOS, COTIZA SIN COMPROMISO</p>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>INFORMACIÓN</h3>
+        <a class="contact-item" href="https://wa.me/56973752851" target="_blank">
+          <span class="contact-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <div>
+            <div class="contact-label">WhatsApp</div>
+            <div class="contact-val">+56 9 7375 2851</div>
+          </div>
+        </a>
+        <a class="contact-item" href="https://instagram.com/jemba_tech" target="_blank">
+          <span class="contact-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37" fill="currentColor" stroke="none"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></span>
+          <div>
+            <div class="contact-label">Instagram</div>
+            <div class="contact-val">@jemba_tech</div>
+          </div>
+        </a>
+        <div class="contact-item">
+          <span class="contact-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <div>
+            <div class="contact-label">Cobertura</div>
+            <div class="contact-val">Santiago / Valparaíso</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="contact-form">
+          <div class="form-group">
+            <label class="form-label">Tu nombre</label>
+            <input type="text" id="f-name" placeholder="Ej: Juan Pérez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Servicio</label>
+            <select id="f-service">
+              <option value="">Selecciona un servicio...</option>
+              <option>Armado de PC</option>
+              <option>Cotización</option>
+              <option>Mantención</option>
+              <option>Upgrade</option>
+              <option>Diagnóstico</option>
+              <option>PC Gamer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tu mensaje / presupuesto aprox.</label>
+            <textarea id="f-msg" placeholder="Cuéntanos qué necesitas, tu presupuesto y zona..."></textarea>
+          </div>
+          <div class="form-submit">
+            <button class="btn btn-primary" id="sendWa" style="width:100%;justify-content:center">Enviar por WhatsApp</button>
+          </div>
+          <div id="form-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2025 <span>Benja</span> · Jemba Tech · Santiago / Valparaíso</p>
+  <p style="margin-top:0.5rem;opacity:0.5">Hecho con dedicación para los gamers y techies de Chile</p>
+</footer>
+
+<!-- FAB Container -->
+<div class="fab-container">
+  <div class="theme-fab" id="themeFabToggle">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </div>
+  <a class="wa-fab" href="https://wa.me/56973752851?text=Hola%20Jemba%20Tech!%20Quiero%20una%20cotizaci%C3%B3n" target="_blank" title="Chatear por WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+</div>
+
+<script>
+// ─── BACKGROUND ANIMATION ───
+const canvas = document.getElementById('circuit-bg');
+const ctx = canvas.getContext('2d');
+let W, H, nodes = [], particles = [], paths = [];
+let hexagons = []; // para modo claro
+const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  init();
+}
+
+// ─ Init circuit (dark) + hexagons (light)
+function init() {
+  nodes = []; paths = []; particles = []; hexagons = [];
+
+  // Circuit dark
+  const cols = Math.floor(W / 90);
+  const rows = Math.floor(H / 90);
+  for (let r = 0; r <= rows; r++) {
+    for (let c = 0; c <= cols; c++) {
+      if (Math.random() < 0.5) {
+        nodes.push({ x: c*90+(Math.random()-0.5)*40, y: r*90+(Math.random()-0.5)*40, r: Math.random()<0.1?5:2.5 });
+      }
+    }
+  }
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i+1; j < nodes.length; j++) {
+      const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if (d<140 && Math.random()<0.35) {
+        paths.push({from:nodes[i],to:nodes[j]});
+        if (Math.random()<0.3) particles.push({path:paths[paths.length-1],t:Math.random(),speed:0.002+Math.random()*0.004});
+      }
+    }
+  }
+
+  // Hexagons light
+  const count = Math.floor((W * H) / 28000);
+  for (let i = 0; i < count; i++) {
+    hexagons.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: 18 + Math.random() * 38,
+      vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18,
+      rot: Math.random()*Math.PI*2, vrot: (Math.random()-0.5)*0.004,
+      alpha: 0.04 + Math.random()*0.14,
+      color: Math.random() > 0.5 ? '#00e5ff' : '#39ff14'
+    });
+  }
+}
+
+function drawHex(x, y, r, rot) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = rot + (Math.PI / 3) * i;
+    const px = x + r * Math.cos(a);
+    const py = y + r * Math.sin(a);
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+}
+
+function getColors() {
+  return isDark()
+    ? { line:'rgba(0,180,0,0.12)', node:'rgba(0,220,0,0.35)', big:'#00ff44', particle:'#39ff14' }
+    : { line:'rgba(0,229,255,0.08)', node:'rgba(0,229,255,0.2)', big:'#00e5ff', particle:'#39ff14' };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  const c = getColors();
+
+  if (!isDark()) {
+    // ─ Hexágonos flotantes modo claro
+    for (const h of hexagons) {
+      h.x += h.vx; h.y += h.vy; h.rot += h.vrot;
+      if (h.x < -h.r*2) h.x = W + h.r;
+      if (h.x > W + h.r*2) h.x = -h.r;
+      if (h.y < -h.r*2) h.y = H + h.r;
+      if (h.y > H + h.r*2) h.y = -h.r;
+      ctx.save();
+      ctx.globalAlpha = h.alpha;
+      ctx.strokeStyle = h.color;
+      ctx.lineWidth = 1.2;
+      ctx.shadowBlur = 8; ctx.shadowColor = h.color;
+      drawHex(h.x, h.y, h.r, h.rot);
+      ctx.stroke();
+      ctx.restore();
+    }
+  } else {
+    // ─ Circuit board modo oscuro
+    ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+    for (const p of paths) {
+      ctx.beginPath();
+      ctx.moveTo(p.from.x, p.from.y);
+      ctx.lineTo(p.to.x, p.from.y);
+      ctx.lineTo(p.to.x, p.to.y);
+      ctx.stroke();
+    }
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = n.r>3 ? c.big : c.node;
+      ctx.shadowBlur = n.r>3 ? 10 : 0;
+      ctx.shadowColor = c.big;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    ctx.shadowBlur = 8; ctx.shadowColor = c.particle;
+    for (const p of particles) {
+      p.t += p.speed; if (p.t>1) p.t=0;
+      const t=p.t, path=p.path;
+      let x,y;
+      if (t<0.5) { x=path.from.x+(path.to.x-path.from.x)*(t*2); y=path.from.y; }
+      else { x=path.to.x; y=path.from.y+(path.to.y-path.from.y)*((t-0.5)*2); }
+      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+      ctx.fillStyle=c.particle; ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  }
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+
+// ─── NAVIGATION SCROLL ─── 
+const mainNav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 100) {
+    mainNav.classList.add('scrolled');
+  } else {
+    mainNav.classList.remove('scrolled');
+  }
+});
+
+// Agregar logo a la nav cuando se scrollea
+if (!mainNav.querySelector('.nav-logo')) {
+  const navLogo = document.createElement('a');
+  navLogo.className = 'nav-logo';
+  navLogo.href = '#';
+  navLogo.setAttribute('aria-label', 'Volver al inicio');
+  navLogo.innerHTML = `<img src="./Jemba Tech Logo Circular.png" alt="Jemba Tech"><span>JEMBA TECH</span>`;
+  mainNav.appendChild(navLogo);
+}
+
+// ─── SIDEBAR MENU ─── 
+// Los links del sidebar usan href nativos, no se necesita JS adicional
+
+// ─── THEME TOGGLE ───
+const themeFab = document.getElementById('themeFabToggle');
+themeFab.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  init(); // reiniciar animación al cambiar tema
+});
+
+// ─── CAROUSEL ───
+(function() {
+  const track = document.getElementById('carouselTrack');
+  const slides = track.querySelectorAll('.carousel-slide');
+  const total = slides.length;
+  const dotsContainer = document.getElementById('carDots');
+  const thumbsContainer = document.getElementById('carThumbs');
+  const counter = document.getElementById('carCounter');
+  const modal = document.getElementById('workModal');
+  let current = 0;
+  let autoTimer = null;
+
+  // ─ Datos de cada trabajo (basados en las fotos que mandaste)
+  const trabajos = [
+    {
+      img: '20200911_172331.jpg',
+      title: 'Primer Ensamble',
+      tag: 'ARMADO · INICIOS',
+      quote: '"Quedé impresionado con el resultado, muy detallista"',
+      desc: 'Armado completo desde cero. Se priorizó el orden de los cables para mejorar el flujo de aire y la estética del equipo.'
+    },
+    {
+      img: '20220712_153324.jpg',
+      title: 'Mantenimiento Preventivo Notebook',
+      tag: 'LIMPIEZA · HARDWARE',
+      quote: '"Me dejó el equipo como nuevo, súper atento"',
+      desc: 'Limpieza interna de ventiladores y conductos de ventilación. Se eliminó el polvo acumulado que causaba ruidos y exceso de calor.'
+    },
+    {
+      img: '20220714_132819.jpg',
+      title: 'Optimización de Sistema y Rendimiento',
+      tag: 'UPGRADE · SOFTWARE · CURSO',
+      quote: '"Rápido y al precio que acordamos, lo recomiendo 100%"',
+      desc: 'Instalación de SSD NVMe (disco ultra rápido), Windows y drivers actualizados. Incluyó una asesoría en atajos de teclado y aplicaciones para que el cliente aproveche al máximo la velocidad del equipo.'
+    },
+    {
+      img: 'SnapInsta.to_622...',
+      title: 'Potenciamiento Notebook M.2',
+      tag: 'UPGRADE · VELOCIDAD',
+      quote: '"Notó el cambio al tiro, arranca en segundos ahora"',
+      desc: 'Instalación de disco sólido M.2 en equipo con 8GB de RAM. Se eliminó el "cuello de botella" del disco mecánico, permitiendo que el procesador y la gráfica trabajen a su máxima capacidad.'
+    },
+    {
+      img: 'SnapInsta.to_649...',
+      title: 'Armado por cotización de pc de Alta Gama',
+      tag: 'ARMADO · GAMA ALTA',
+      quote: '"Me armó exactamente lo que quería dentro de mi presupuesto"',
+      desc: 'Configuración personalizada con Ryzen 7 5700X y RTX 3060. Un equipo diseñado para gaming y edición de videos.'
+    },
+    {
+      img: 'SnapInsta.to_650...',
+      title: 'Upgrade SSD y Gestión Térmica',
+      tag: 'UPGRADE · MANTENCIÓN',
+      quote: '"Excelente trabajo, muy profesional y honesto"',
+      desc: 'Salto de 120GB a 480GB en SSD. Se aplicó pasta térmica de alta conductividad (compuesto que transfiere el calor del procesador al cooler) para bajar las temperaturas hasta en 15°C.'
+    },
+    {
+      img: 'SnapInsta.to_652... (1)',
+      title: 'Mantenimiento Integral 2 Años',
+      tag: 'RESTAURACIÓN · FORMATEO',
+      quote: '"Volvió a tener el rendimiento original de la máquina"',
+      desc: 'Servicio tras 2 años de uso: limpieza física profunda y formateo de sistema para eliminar archivos basura y errores que ralentizaban el PC.'
+    },
+    {
+      img: 'SnapInsta.to_652... (2)',
+      title: 'Renovación Estética y Flujo',
+      tag: 'UPGRADE · GABINETE',
+      quote: '"El cambio de gabinete le dio una vida nueva"',
+      desc: 'Migración de componentes a un nuevo gabinete con mejor ventilación y estética moderna. Se optimizó el flujo de aire para proteger la vida útil de las piezas.'
+    },
+    {
+      img: 'SnapInsta.to_653...',
+      title: 'Vida Nueva para Notebook Antiguo',
+      tag: 'UPGRADE · SSD',
+      quote: '"Súper contento, lo recomiendo a todos mis amigos"',
+      desc: 'Cambio de disco duro mecánico (HDD) por uno de estado sólido (SSD). Es la mejora más efectiva para que un computador viejo sea 10 veces más rápido al iniciar.'
+    },
+    {
+      img: 'SnapInsta.to_655...',
+      title: 'Solución de Lentitud Crónica',
+      tag: 'REPARACIÓN · NOTEBOOK',
+      quote: '"Pensé que tendría que comprar uno nuevo, Benja lo salvó"',
+      desc: 'Diagnóstico de hardware por lentitud extrema. Se reemplazaron componentes desgastados, logrando una fluidez superior a cuando el equipo era nuevo.'
+    },
+    {
+      img: 'WhatsApp...14.22.47',
+      title: 'Build Oficina Rendidor',
+      tag: 'ARMADO · ECONÓMICO',
+      quote: '"Me asesoró muy bien y consiguió el mejor precio"',
+      desc: 'PC armado para tareas administrativas. Selección inteligente de piezas para garantizar rapidez en Office y navegación sin gastar de más.'
+    },
+    {
+      img: 'WhatsApp...14.42.48',
+      title: 'Mantenimiento de PC Desktop',
+      tag: 'MANTENCIÓN · PREVENTIVA',
+      quote: '"Perfecto en todo sentido, lo recomiendo"',
+      desc: 'Limpieza detallada de placa madre y ventiladores de torre. Prevención de fallos por estática y acumulación de residuos ambientales.'
+    },
+    {
+      img: 'WhatsApp...02.11.11 (1)',
+      title: 'Setup de Referencia Personal',
+      tag: 'ESTÉTICA · RGB',
+      quote: '"Quedó igual a como lo imaginé"',
+      desc: 'Muestra de gestión de cables y sincronización de iluminación RGB. Referencia de calidad visual y técnica para proyectos de gama alta.'
+    },
+    {
+      img: 'WhatsApp...02.11.11 (2)',
+      title: 'Optimización de Setup Gaming',
+      tag: 'ARMADO · PERSONALIZADO',
+      quote: '"La PC quedó espectacular, mejor de lo que esperaba"',
+      desc: 'Detalle de configuración de iluminación y refrigeración. Un equipo equilibrado tanto en potencia como en presentación visual.'
+    }
+  ];
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Slide ' + (i+1));
+    d.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(d);
+  });
+
+  // Build thumbnails
+  slides.forEach((slide, i) => {
+    const img = slide.querySelector('img');
+    const th = document.createElement('div');
+    th.className = 'carousel-thumb' + (i === 0 ? ' active' : '');
+    const tImg = document.createElement('img');
+    tImg.src = img.src; tImg.alt = img.alt; tImg.loading = 'lazy';
+    th.appendChild(tImg);
+    th.addEventListener('click', () => goTo(i));
+    thumbsContainer.appendChild(th);
+  });
+
+  function goTo(idx) {
+    current = (idx + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    counter.textContent = `${current + 1} / ${total}`;
+    dotsContainer.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    const thumbEls = thumbsContainer.querySelectorAll('.carousel-thumb');
+    thumbEls.forEach((t, i) => t.classList.toggle('active', i === current));
+    thumbsContainer.scrollTo({ left: thumbEls[current].offsetLeft - thumbsContainer.clientWidth / 2 + thumbEls[current].clientWidth / 2, behavior: 'smooth' });
+    resetAuto();
+  }
+
+  function resetAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => goTo(current + 1), 5000);
+  }
+
+  document.getElementById('carPrev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('carNext').addEventListener('click', () => goTo(current + 1));
+
+  // Touch / swipe
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+  });
+
+  // ─ Modal card al hacer clic en la imagen
+  slides.forEach((slide, i) => {
+    slide.style.cursor = 'pointer';
+    slide.addEventListener('click', () => {
+      const t = trabajos[i] || {};
+      document.getElementById('modalImg').src = slide.querySelector('img').src;
+      document.getElementById('modalTag').textContent = t.tag || 'TRABAJO REALIZADO';
+      document.getElementById('modalTitle').textContent = t.title || `Trabajo ${i + 1}`;
+      document.getElementById('modalQuote').textContent = t.quote || '';
+      document.getElementById('modalDesc').textContent = t.desc || '';
+      modal.classList.add('open');
+      clearInterval(autoTimer); // pausar autoplay mientras el modal está abierto
+    });
+  });
+
+  function closeModal() {
+    modal.classList.remove('open');
+    resetAuto();
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  resetAuto();
+})();
+
+// ─── WHATSAPP FORM ───
+document.getElementById('sendWa').addEventListener('click', () => {
+  const name = document.getElementById('f-name').value.trim();
+  const service = document.getElementById('f-service').value;
+  const msg = document.getElementById('f-msg').value.trim();
+  if (!name || !service || !msg) {
+    document.getElementById('form-msg').textContent = '⚠ Por favor completa todos los campos.';
+    return;
+  }
+  const text = encodeURIComponent(`Hola Jemba Tech! 👋\nNombre: ${name}\nServicio: ${service}\n${msg}`);
+  window.open(`https://wa.me/56973752851?text=${text}`, '_blank');
+  document.getElementById('form-msg').textContent = '✅ Redirigiendo a WhatsApp...';
+  setTimeout(() => { document.getElementById('form-msg').textContent = ''; }, 3000);
+});
+</script>
+</body>
+</html>
