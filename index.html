@@ -19,16 +19,16 @@
     --nav: rgba(5,15,5,0.92);
   }
   :root[data-theme="light"] {
-    --bg: #f0feff;
-    --bg2: #e0fafc;
-    --card: rgba(255,255,255,0.9);
-    --text: #003340;
-    --muted: #007a8a;
-    --accent: #00e5ff;
+    --bg: #06111a;
+    --bg2: #091822;
+    --card: rgba(0,255,180,0.045);
+    --text: #d4fff5;
+    --muted: #5bcfb0;
+    --accent: #00ffe0;
     --accent2: #39ff14;
-    --border: rgba(0,229,255,0.35);
-    --glow: 0 0 20px rgba(0,229,255,0.5);
-    --nav: rgba(240,254,255,0.95);
+    --border: rgba(0,255,224,0.2);
+    --glow: 0 0 22px rgba(0,255,224,0.5);
+    --nav: rgba(6,17,26,0.95);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -577,11 +577,34 @@
   .contact-item:hover { border-color: var(--accent); box-shadow: var(--glow); transform: translateX(4px); }
   .contact-icon {
     display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px; flex-shrink: 0;
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(57,255,20,0.12), rgba(57,255,20,0.04));
+    border: 1.5px solid var(--border);
+    box-shadow: 0 0 14px rgba(57,255,20,0.1), inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-icon::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .contact-item:hover .contact-icon {
+    background: linear-gradient(135deg, rgba(57,255,20,0.22), rgba(57,255,20,0.08));
+    box-shadow: 0 0 22px rgba(57,255,20,0.3);
+    border-color: var(--accent);
   }
   .contact-icon svg {
-    width: 24px; height: 24px; stroke: var(--accent); fill: currentColor; stroke-width: 1.5;
+    width: 26px; height: 26px; stroke: var(--accent); fill: none; stroke-width: 1.8;
+    position: relative; z-index: 1;
+    filter: drop-shadow(0 0 4px rgba(57,255,20,0.4));
   }
+  /* Íconos filled (whatsapp, instagram) */
+  .contact-icon svg.filled { fill: var(--accent); stroke: none; }
   .contact-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
   .contact-val { font-family: 'Orbitron', sans-serif; font-size: 0.95rem; color: var(--accent); }
 
@@ -615,13 +638,31 @@
     background: var(--card); border: 2px solid var(--accent);
     width: 60px; height: 60px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.3s;
+    cursor: pointer; transition: box-shadow 0.3s, border-color 0.3s;
     box-shadow: 0 4px 15px rgba(57,255,20,0.2);
+    position: relative;
   }
-  .theme-fab svg {
-    width: 28px; height: 28px; stroke: var(--accent); fill: none; stroke-width: 2;
+  /* Ambos íconos centrados y apilados */
+  .fab-icon-dark,
+  .fab-icon-light {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform-origin: center;
+    transition: opacity 0.3s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
   }
-  .theme-fab:hover { box-shadow: 0 4px 25px rgba(57,255,20,0.4); }
+  .fab-icon-dark  { width: 26px; height: 26px; margin: -13px 0 0 -13px; stroke: var(--accent); fill: none; }
+  .fab-icon-light { width: 24px; height: 24px; margin: -12px 0 0 -12px; stroke: var(--accent); fill: none; }
+
+  /* En dark: mostrar placa, ocultar luna */
+  [data-theme="dark"] .fab-icon-dark  { opacity: 1; transform: scale(1) rotate(0deg); }
+  [data-theme="dark"] .fab-icon-light { opacity: 0; transform: scale(0.3) rotate(-120deg); }
+  /* En light: mostrar luna, ocultar placa */
+  [data-theme="light"] .fab-icon-dark  { opacity: 0; transform: scale(0.3) rotate(120deg); }
+  [data-theme="light"] .fab-icon-light { opacity: 1; transform: scale(1) rotate(0deg); }
+
+  .theme-fab:hover { 
+    box-shadow: var(--glow);
+  }
   .wa-fab {
     background: #25d366; color: #fff;
     width: 60px; height: 60px; border-radius: 50%;
@@ -647,6 +688,15 @@
     color: var(--muted); font-size: 0.85rem; letter-spacing: 1px;
   }
   footer span { color: var(--accent); }
+  .footer-tagline {
+    margin-top: 0.5rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.55;
+  }
 
   /* ─── SCAN LINE ─── */
   body::after {
@@ -667,6 +717,31 @@
     .nav-links a:not(:last-child):not(.btn) { display: none; }
     nav { padding: 0.75rem 1rem; }
   }
+
+  /* ─── OVERRIDES MODO CLARO (violeta + dorado) ─── */
+  [data-theme="light"] body { background: var(--bg); }
+  [data-theme="light"] .service-card {
+    background: rgba(0,255,224,0.04);
+    border-color: rgba(0,255,224,0.15);
+  }
+  [data-theme="light"] .service-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 32px rgba(0,255,224,0.18), 0 0 0 1px rgba(0,255,224,0.15);
+  }
+  [data-theme="light"] #services { background: transparent; }
+  [data-theme="light"] #why { background: transparent; }
+  [data-theme="light"] #gallery { background: transparent; }
+  [data-theme="light"] #contact { background: transparent; }
+  [data-theme="light"] footer { background: rgba(0,15,10,0.85); border-top-color: rgba(0,255,224,0.18); }
+  [data-theme="light"] .hero h1 { text-shadow: 0 0 30px rgba(0,255,224,0.5); }
+  [data-theme="light"] .btn-primary { background: var(--accent); color: #06111a; box-shadow: 0 0 20px rgba(0,255,224,0.4); }
+  [data-theme="light"] .btn-primary:hover { box-shadow: 0 0 40px rgba(0,255,224,0.7); }
+  [data-theme="light"] .work-card-tag { background: var(--accent); color: #06111a; }
+  [data-theme="light"] .carousel-slide { background: #04101a; }
+  [data-theme="light"] .carousel-dot { border-color: rgba(0,255,224,0.3); }
+  [data-theme="light"] .carousel-dot.active { box-shadow: 0 0 10px rgba(0,255,224,0.6); }
+  [data-theme="light"] .carousel-thumb.active { box-shadow: 0 0 12px rgba(0,255,224,0.4); }
+  [data-theme="light"] .wa-fab { box-shadow: 0 4px 20px rgba(0,255,224,0.4); }
 </style>
 </head>
 <body>
@@ -874,21 +949,45 @@
       <div class="contact-info">
         <h3>INFORMACIÓN</h3>
         <a class="contact-item" href="https://wa.me/56973752851" target="_blank">
-          <span class="contact-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              <path d="M9 10c0-.6.4-1 1-1s1 .4 1 1-.4 2-1 2-1-.4-1-1z" fill="var(--accent)" stroke="none"/>
+              <path d="M13 10c0-.6.4-1 1-1s1 .4 1 1-.4 2-1 2-1-.4-1-1z" fill="var(--accent)" stroke="none"/>
+            </svg>
+          </span>
           <div>
             <div class="contact-label">WhatsApp</div>
             <div class="contact-val">+56 9 7375 2851</div>
           </div>
         </a>
         <a class="contact-item" href="https://instagram.com/jemba_tech" target="_blank">
-          <span class="contact-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37" fill="currentColor" stroke="none"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="6"/>
+              <circle cx="12" cy="12" r="5"/>
+              <circle cx="17.5" cy="6.5" r="1.5" fill="var(--accent)" stroke="none"/>
+              <!-- Brillo interno -->
+              <path d="M6 6 Q8 5 10 6" stroke-width="1" opacity="0.5"/>
+            </svg>
+          </span>
           <div>
             <div class="contact-label">Instagram</div>
             <div class="contact-val">@jemba_tech</div>
           </div>
         </a>
         <div class="contact-item">
-          <span class="contact-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Mapa desplegado con pin -->
+              <polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21" opacity="0.5"/>
+              <line x1="9" y1="3" x2="9" y2="18"/>
+              <line x1="15" y1="6" x2="15" y2="21"/>
+              <!-- Pin -->
+              <path d="M12 8 a2.5 2.5 0 1 1 0 .01" fill="var(--accent)" stroke="none"/>
+              <path d="M12 10.5 L12 14" stroke-width="2"/>
+            </svg>
+          </span>
           <div>
             <div class="contact-label">Cobertura</div>
             <div class="contact-val">Santiago / Valparaíso</div>
@@ -929,15 +1028,59 @@
 
 <!-- Footer -->
 <footer>
-  <p>© 2025 <span>Benja</span> · Jemba Tech · Santiago / Valparaíso</p>
-  <p style="margin-top:0.5rem;opacity:0.5">Hecho con dedicación para los gamers y techies de Chile</p>
+  <p>© 2025 <span>Benjamín</span> · Jemba Tech · Santiago / Valparaíso</p>
+  <p class="footer-tagline">Tu solución tecnológica, a un clic de distancia.</p>
 </footer>
 
 <!-- FAB Container -->
 <div class="fab-container">
-  <div class="theme-fab" id="themeFabToggle">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <div class="theme-fab" id="themeFabToggle" title="Cambiar tema">
+    <!-- Ícono placa (modo oscuro activo) -->
+    <svg class="fab-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+      <rect x="2" y="5" width="20" height="14" rx="2"/>
+      <circle cx="7" cy="9" r="1.2" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="9" r="1.2" fill="currentColor" stroke="none"/>
+      <circle cx="17" cy="9" r="1.2" fill="currentColor" stroke="none"/>
+      <line x1="7" y1="13" x2="7" y2="16"/>
+      <line x1="12" y1="13" x2="12" y2="16"/>
+      <line x1="17" y1="13" x2="17" y2="16"/>
+      <line x1="4" y1="13" x2="20" y2="13"/>
+    </svg>
+    <!-- Ícono lluvia de datos (modo claro activo) -->
+    <svg class="fab-icon-light" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+      <!-- 5 columnas de caracteres cayendo con distintas alturas -->
+      <text x="1"  y="7"  font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="1">1</text>
+      <text x="1"  y="13" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.6">0</text>
+      <text x="1"  y="19" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.25">A</text>
+
+      <text x="5"  y="4"  font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="1">0</text>
+      <text x="5"  y="10" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.6">F</text>
+      <text x="5"  y="16" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.3">3</text>
+
+      <text x="9"  y="9"  font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="1">A</text>
+      <text x="9"  y="15" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.55">7</text>
+      <text x="9"  y="21" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.2">B</text>
+
+      <text x="13" y="5"  font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="1">9</text>
+      <text x="13" y="11" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.6">C</text>
+      <text x="13" y="17" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.25">1</text>
+
+      <text x="17" y="8"  font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="1">E</text>
+      <text x="17" y="14" font-size="5" font-family="monospace" fill="currentColor" stroke="none" opacity="0.55">5</text>
+    </svg>
   </div>
+<!-- Easter Egg: Foxy FNAF -->
+<div id="foxy-overlay" style="
+  display:none; position:fixed; inset:0; z-index:99999;
+  background:transparent; align-items:center; justify-content:center;
+">
+  <img src="./foxy.gif" alt="FOXY" style="
+    width:250vmin; height:250vmin;
+    object-fit:contain; display:block;
+    margin-top:400px;
+  ">
+</div>
+
   <a class="wa-fab" href="https://wa.me/56973752851?text=Hola%20Jemba%20Tech!%20Quiero%20una%20cotizaci%C3%B3n" target="_blank" title="Chatear por WhatsApp">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -949,8 +1092,7 @@
 // ─── BACKGROUND ANIMATION ───
 const canvas = document.getElementById('circuit-bg');
 const ctx = canvas.getContext('2d');
-let W, H, nodes = [], particles = [], paths = [];
-let hexagons = []; // para modo claro
+let W, H, nodes = [], particles = [], paths = [], stars = [];
 const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
 function resize() {
@@ -959,113 +1101,111 @@ function resize() {
   init();
 }
 
-// ─ Init circuit (dark) + hexagons (light)
 function init() {
-  nodes = []; paths = []; particles = []; hexagons = [];
+  nodes = []; paths = []; particles = []; stars = [];
 
-  // Circuit dark
-  const cols = Math.floor(W / 90);
-  const rows = Math.floor(H / 90);
-  for (let r = 0; r <= rows; r++) {
-    for (let c = 0; c <= cols; c++) {
-      if (Math.random() < 0.5) {
+  // ─ Circuit board (dark)
+  const cols = Math.floor(W / 90), rows = Math.floor(H / 90);
+  for (let r = 0; r <= rows; r++)
+    for (let c = 0; c <= cols; c++)
+      if (Math.random() < 0.5)
         nodes.push({ x: c*90+(Math.random()-0.5)*40, y: r*90+(Math.random()-0.5)*40, r: Math.random()<0.1?5:2.5 });
-      }
-    }
-  }
-  for (let i = 0; i < nodes.length; i++) {
+  for (let i = 0; i < nodes.length; i++)
     for (let j = i+1; j < nodes.length; j++) {
-      const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y;
-      const d=Math.sqrt(dx*dx+dy*dy);
+      const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y, d=Math.sqrt(dx*dx+dy*dy);
       if (d<140 && Math.random()<0.35) {
         paths.push({from:nodes[i],to:nodes[j]});
         if (Math.random()<0.3) particles.push({path:paths[paths.length-1],t:Math.random(),speed:0.002+Math.random()*0.004});
       }
     }
-  }
 
-  // Hexagons light
-  const count = Math.floor((W * H) / 28000);
-  for (let i = 0; i < count; i++) {
-    hexagons.push({
-      x: Math.random() * W, y: Math.random() * H,
-      r: 18 + Math.random() * 38,
-      vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18,
-      rot: Math.random()*Math.PI*2, vrot: (Math.random()-0.5)*0.004,
-      alpha: 0.04 + Math.random()*0.14,
-      color: Math.random() > 0.5 ? '#00e5ff' : '#39ff14'
+  // ─ Lluvia de datos modo claro (columnas de caracteres cayendo)
+  const rainCols = Math.floor(W / 16);
+  for (let c = 0; c < rainCols; c++) {
+    stars.push({
+      col: c,
+      x: c * 16 + 8,
+      y: Math.random() * H,
+      speed: 1.8 + Math.random() * 3.5,
+      length: 10 + Math.floor(Math.random() * 20),
+      chars: Array.from({length: 20}, () => '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*<>{}[]|'[Math.floor(Math.random()*49)]),
+      tick: 0,
+      tickMax: 4 + Math.floor(Math.random()*6),
+      alpha: 0.4 + Math.random() * 0.6,
+      color: Math.random() > 0.4 ? '#00ffe0' : '#ffffff'
     });
   }
 }
 
-function drawHex(x, y, r, rot) {
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const a = rot + (Math.PI / 3) * i;
-    const px = x + r * Math.cos(a);
-    const py = y + r * Math.sin(a);
-    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-}
-
-function getColors() {
-  return isDark()
-    ? { line:'rgba(0,180,0,0.12)', node:'rgba(0,220,0,0.35)', big:'#00ff44', particle:'#39ff14' }
-    : { line:'rgba(0,229,255,0.08)', node:'rgba(0,229,255,0.2)', big:'#00e5ff', particle:'#39ff14' };
-}
-
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  const c = getColors();
+  const t = performance.now() * 0.001;
 
   if (!isDark()) {
-    // ─ Hexágonos flotantes modo claro
-    for (const h of hexagons) {
-      h.x += h.vx; h.y += h.vy; h.rot += h.vrot;
-      if (h.x < -h.r*2) h.x = W + h.r;
-      if (h.x > W + h.r*2) h.x = -h.r;
-      if (h.y < -h.r*2) h.y = H + h.r;
-      if (h.y > H + h.r*2) h.y = -h.r;
-      ctx.save();
-      ctx.globalAlpha = h.alpha;
-      ctx.strokeStyle = h.color;
-      ctx.lineWidth = 1.2;
-      ctx.shadowBlur = 8; ctx.shadowColor = h.color;
-      drawHex(h.x, h.y, h.r, h.rot);
-      ctx.stroke();
-      ctx.restore();
+    // ─ Lluvia de datos estilo Matrix
+    ctx.font = 'bold 13px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    for (const s of stars) {
+      s.y += s.speed;
+      s.tick++;
+      if (s.tick >= s.tickMax) {
+        s.tick = 0;
+        // Mutar un caracter aleatorio
+        const idx = Math.floor(Math.random() * s.chars.length);
+        s.chars[idx] = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*<>{}[]|'[Math.floor(Math.random()*49)];
+      }
+      if (s.y > H + s.length * 22) {
+        s.y = -s.length * 22;
+        s.speed = 1.2 + Math.random() * 2.8;
+      }
+      // Dibujar columna de chars con fade
+      for (let i = 0; i < s.length; i++) {
+        const cy = s.y - i * 16;
+        if (cy < 0 || cy > H) continue;
+        const ratio = 1 - i / s.length;
+        // Cabeza: blanco brillante
+        if (i === 0) {
+          ctx.globalAlpha = s.alpha;
+          ctx.fillStyle = '#e0faff';
+          ctx.shadowBlur = 12; ctx.shadowColor = '#00ffe0';
+        } else if (i < 3) {
+          ctx.globalAlpha = s.alpha * 0.85;
+          ctx.fillStyle = '#b0ffff';
+          ctx.shadowBlur = 4; ctx.shadowColor = '#00ffe0';
+        } else {
+          ctx.globalAlpha = s.alpha * ratio * 0.65;
+          ctx.fillStyle = i < 3 ? '#ffffff' : s.color;
+          ctx.shadowBlur = 0;
+        }
+        ctx.fillText(s.chars[i % s.chars.length], s.x, cy);
+      }
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
     }
+
   } else {
     // ─ Circuit board modo oscuro
-    ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+    ctx.strokeStyle='rgba(0,180,0,0.12)'; ctx.lineWidth=1;
     for (const p of paths) {
-      ctx.beginPath();
-      ctx.moveTo(p.from.x, p.from.y);
-      ctx.lineTo(p.to.x, p.from.y);
-      ctx.lineTo(p.to.x, p.to.y);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p.from.x,p.from.y);
+      ctx.lineTo(p.to.x,p.from.y); ctx.lineTo(p.to.x,p.to.y); ctx.stroke();
     }
     for (const n of nodes) {
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-      ctx.fillStyle = n.r>3 ? c.big : c.node;
-      ctx.shadowBlur = n.r>3 ? 10 : 0;
-      ctx.shadowColor = c.big;
-      ctx.fill();
-      ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle = n.r>3?'#00ff44':'rgba(0,220,0,0.35)';
+      ctx.shadowBlur = n.r>3?10:0; ctx.shadowColor='#00ff44';
+      ctx.fill(); ctx.shadowBlur=0;
     }
-    ctx.shadowBlur = 8; ctx.shadowColor = c.particle;
+    ctx.shadowBlur=8; ctx.shadowColor='#39ff14';
     for (const p of particles) {
-      p.t += p.speed; if (p.t>1) p.t=0;
-      const t=p.t, path=p.path;
-      let x,y;
-      if (t<0.5) { x=path.from.x+(path.to.x-path.from.x)*(t*2); y=path.from.y; }
-      else { x=path.to.x; y=path.from.y+(path.to.y-path.from.y)*((t-0.5)*2); }
+      p.t+=p.speed; if(p.t>1)p.t=0;
+      const pt=p.t, pp=p.path; let x,y;
+      if(pt<0.5){x=pp.from.x+(pp.to.x-pp.from.x)*(pt*2);y=pp.from.y;}
+      else{x=pp.to.x;y=pp.from.y+(pp.to.y-pp.from.y)*((pt-0.5)*2);}
       ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
-      ctx.fillStyle=c.particle; ctx.fill();
+      ctx.fillStyle='#39ff14'; ctx.fill();
     }
-    ctx.shadowBlur = 0;
+    ctx.shadowBlur=0;
   }
   requestAnimationFrame(draw);
 }
@@ -1097,14 +1237,57 @@ if (!mainNav.querySelector('.nav-logo')) {
 // ─── SIDEBAR MENU ─── 
 // Los links del sidebar usan href nativos, no se necesita JS adicional
 
-// ─── THEME TOGGLE ───
+// ─── THEME TOGGLE + EASTER EGG ───
 const themeFab = document.getElementById('themeFabToggle');
+const foxyOverlay = document.getElementById('foxy-overlay');
+let clickCount = 0;
+let eggUnlocked = false;
+
 themeFab.addEventListener('click', () => {
+  // Cambio normal de tema
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  init(); // reiniciar animación al cambiar tema
+  init();
+
+  // Contador easter egg
+  if (!eggUnlocked) {
+    clickCount++;
+    // Feedback sutil: vibrar ligeramente el botón cada 10 clicks
+    if (clickCount % 10 === 0 && clickCount < 100) {
+      themeFab.style.transition = 'transform 0.1s';
+      themeFab.style.transform = 'scale(1.25)';
+      setTimeout(() => { themeFab.style.transform = ''; }, 150);
+    }
+    // ¡A los 100!
+    if (clickCount >= 10) {
+      eggUnlocked = true;
+      setTimeout(() => {
+        foxyOverlay.style.display = 'flex';
+        try {
+          const ctx2 = new AudioContext();
+          const osc = ctx2.createOscillator();
+          const gain = ctx2.createGain();
+          osc.connect(gain); gain.connect(ctx2.destination);
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(80, ctx2.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(400, ctx2.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.4, ctx2.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 0.5);
+          osc.start(); osc.stop(ctx2.currentTime + 0.5);
+        } catch(e) {}
+        // Cerrar automáticamente a los 2 segundos
+        setTimeout(() => {
+          foxyOverlay.style.display = 'none';
+          clickCount = 0;
+          eggUnlocked = false;
+        }, 800);
+      }, 200);
+    }
+  }
 });
+
+// Foxy no se cierra — solo aparece
 
 // ─── CAROUSEL ───
 (function() {
@@ -1120,104 +1303,20 @@ themeFab.addEventListener('click', () => {
 
   // ─ Datos de cada trabajo (basados en las fotos que mandaste)
   const trabajos = [
-    {
-      img: '20200911_172331.jpg',
-      title: 'Primer Ensamble',
-      tag: 'ARMADO · INICIOS',
-      quote: '"Quedé impresionado con el resultado, muy detallista"',
-      desc: 'Armado completo desde cero. Se priorizó el orden de los cables para mejorar el flujo de aire y la estética del equipo.'
-    },
-    {
-      img: '20220712_153324.jpg',
-      title: 'Mantenimiento Preventivo Notebook',
-      tag: 'LIMPIEZA · HARDWARE',
-      quote: '"Me dejó el equipo como nuevo, súper atento"',
-      desc: 'Limpieza interna de ventiladores y conductos de ventilación. Se eliminó el polvo acumulado que causaba ruidos y exceso de calor.'
-    },
-    {
-      img: '20220714_132819.jpg',
-      title: 'Optimización de Sistema y Rendimiento',
-      tag: 'UPGRADE · SOFTWARE · CURSO',
-      quote: '"Rápido y al precio que acordamos, lo recomiendo 100%"',
-      desc: 'Instalación de SSD NVMe (disco ultra rápido), Windows y drivers actualizados. Incluyó una asesoría en atajos de teclado y aplicaciones para que el cliente aproveche al máximo la velocidad del equipo.'
-    },
-    {
-      img: 'SnapInsta.to_622...',
-      title: 'Potenciamiento Notebook M.2',
-      tag: 'UPGRADE · VELOCIDAD',
-      quote: '"Notó el cambio al tiro, arranca en segundos ahora"',
-      desc: 'Instalación de disco sólido M.2 en equipo con 8GB de RAM. Se eliminó el "cuello de botella" del disco mecánico, permitiendo que el procesador y la gráfica trabajen a su máxima capacidad.'
-    },
-    {
-      img: 'SnapInsta.to_649...',
-      title: 'Armado por cotización de pc de Alta Gama',
-      tag: 'ARMADO · GAMA ALTA',
-      quote: '"Me armó exactamente lo que quería dentro de mi presupuesto"',
-      desc: 'Configuración personalizada con Ryzen 7 5700X y RTX 3060. Un equipo diseñado para gaming y edición de videos.'
-    },
-    {
-      img: 'SnapInsta.to_650...',
-      title: 'Upgrade SSD y Gestión Térmica',
-      tag: 'UPGRADE · MANTENCIÓN',
-      quote: '"Excelente trabajo, muy profesional y honesto"',
-      desc: 'Salto de 120GB a 480GB en SSD. Se aplicó pasta térmica de alta conductividad (compuesto que transfiere el calor del procesador al cooler) para bajar las temperaturas hasta en 15°C.'
-    },
-    {
-      img: 'SnapInsta.to_652... (1)',
-      title: 'Mantenimiento Integral 2 Años',
-      tag: 'RESTAURACIÓN · FORMATEO',
-      quote: '"Volvió a tener el rendimiento original de la máquina"',
-      desc: 'Servicio tras 2 años de uso: limpieza física profunda y formateo de sistema para eliminar archivos basura y errores que ralentizaban el PC.'
-    },
-    {
-      img: 'SnapInsta.to_652... (2)',
-      title: 'Renovación Estética y Flujo',
-      tag: 'UPGRADE · GABINETE',
-      quote: '"El cambio de gabinete le dio una vida nueva"',
-      desc: 'Migración de componentes a un nuevo gabinete con mejor ventilación y estética moderna. Se optimizó el flujo de aire para proteger la vida útil de las piezas.'
-    },
-    {
-      img: 'SnapInsta.to_653...',
-      title: 'Vida Nueva para Notebook Antiguo',
-      tag: 'UPGRADE · SSD',
-      quote: '"Súper contento, lo recomiendo a todos mis amigos"',
-      desc: 'Cambio de disco duro mecánico (HDD) por uno de estado sólido (SSD). Es la mejora más efectiva para que un computador viejo sea 10 veces más rápido al iniciar.'
-    },
-    {
-      img: 'SnapInsta.to_655...',
-      title: 'Solución de Lentitud Crónica',
-      tag: 'REPARACIÓN · NOTEBOOK',
-      quote: '"Pensé que tendría que comprar uno nuevo, Benja lo salvó"',
-      desc: 'Diagnóstico de hardware por lentitud extrema. Se reemplazaron componentes desgastados, logrando una fluidez superior a cuando el equipo era nuevo.'
-    },
-    {
-      img: 'WhatsApp...14.22.47',
-      title: 'Build Oficina Rendidor',
-      tag: 'ARMADO · ECONÓMICO',
-      quote: '"Me asesoró muy bien y consiguió el mejor precio"',
-      desc: 'PC armado para tareas administrativas. Selección inteligente de piezas para garantizar rapidez en Office y navegación sin gastar de más.'
-    },
-    {
-      img: 'WhatsApp...14.42.48',
-      title: 'Mantenimiento de PC Desktop',
-      tag: 'MANTENCIÓN · PREVENTIVA',
-      quote: '"Perfecto en todo sentido, lo recomiendo"',
-      desc: 'Limpieza detallada de placa madre y ventiladores de torre. Prevención de fallos por estática y acumulación de residuos ambientales.'
-    },
-    {
-      img: 'WhatsApp...02.11.11 (1)',
-      title: 'Setup de Referencia Personal',
-      tag: 'ESTÉTICA · RGB',
-      quote: '"Quedó igual a como lo imaginé"',
-      desc: 'Muestra de gestión de cables y sincronización de iluminación RGB. Referencia de calidad visual y técnica para proyectos de gama alta.'
-    },
-    {
-      img: 'WhatsApp...02.11.11 (2)',
-      title: 'Optimización de Setup Gaming',
-      tag: 'ARMADO · PERSONALIZADO',
-      quote: '"La PC quedó espectacular, mejor de lo que esperaba"',
-      desc: 'Detalle de configuración de iluminación y refrigeración. Un equipo equilibrado tanto en potencia como en presentación visual.'
-    }
+    { title: 'Mantención de Notebook', tag: 'MANTENCIÓN · 2020', quote: '"Me dejó el equipo como nuevo, súper atento y rápido"', desc: 'Limpieza interna completa, cambio de pasta térmica y revisión general de hardware. El equipo presentaba sobrecalentamiento y lentitud. Se restauró el rendimiento original.' },
+    { title: 'Diagnóstico y Reparación de PC', tag: 'REPARACIÓN · 2022', quote: '"Excelente trabajo, muy profesional y honesto con el presupuesto"', desc: 'Diagnóstico completo de la placa madre. Se identificaron componentes dañados y se realizó la reparación exitosa, evitando el cambio total del equipo.' },
+    { title: 'Formateo e Instalación Windows', tag: 'FORMATEO · 2022', quote: '"Rápido y al precio que acordamos, lo recomiendo 100%"', desc: 'Formateo completo, instalación de Windows 11, drivers actualizados y configuración de programas básicos. Equipo entregado listo para usar.' },
+    { title: 'Build Gaming RGB', tag: 'ARMADO DE PC · GAMING', quote: '"Me armó exactamente lo que quería dentro de mi presupuesto"', desc: 'PC Gamer de alto rendimiento con iluminación RGB personalizada, cable management prolijo y prueba de estrés. Ideal para gaming competitivo 1080p.' },
+    { title: 'Entrega de Notebook Reparada', tag: 'REPARACIÓN · CLIENTE FELIZ', quote: '"Pensé que tendría que comprar uno nuevo, Benja lo salvó"', desc: 'Notebook con problemas de arranque y pantalla. Se reemplazó el disco por un SSD y se restauró el sistema operativo. Cliente 100% satisfecho.' },
+    { title: 'PC Gamer RTX Armada', tag: 'ARMADO DE PC · GAMA ALTA', quote: '"Quedé impresionado con el resultado, muy detallista"', desc: 'Build de gama alta con tarjeta RTX, refrigeración líquida y setup RGB sincronizado. Benchmarks incluidos. Rendimiento en 1440p sin problemas.' },
+    { title: 'Setup PC de Escritorio', tag: 'ARMADO · TRABAJO/GAMING', quote: '"Me asesoró muy bien y consiguió los componentes al mejor precio"', desc: 'PC de escritorio equilibrada para trabajo y gaming casual. Selección inteligente de componentes para maximizar rendimiento dentro del presupuesto.' },
+    { title: 'PC con Iluminación RGB', tag: 'ARMADO · FULL RGB', quote: '"La PC quedó espectacular, mejor de lo que esperaba"', desc: 'Armado completo con gabinete vidrio templado, iluminación RGB en todos los componentes y ventiladores ARGB. Un PC que impresiona visual y técnicamente.' },
+    { title: 'Upgrade de RAM y SSD', tag: 'UPGRADE · MEJORA DE RENDIMIENTO', quote: '"Notó el cambio al tiro, arranca en segundos ahora"', desc: 'Upgrade de RAM de 8GB a 16GB y reemplazo de HDD por SSD NVMe. El equipo triplicó su velocidad de arranque y respuesta general.' },
+    { title: 'Notebook HP Reparada', tag: 'REPARACIÓN · NOTEBOOK', quote: '"Súper contento, lo recomiendo a todos mis amigos"', desc: 'Notebook HP con falla de sistema operativo y disco en mal estado. Se reemplazó el disco, se instaló Windows actualizado y se realizó limpieza general.' },
+    { title: 'PC Gamer con Gabinete RGB', tag: 'ARMADO · GAMA MEDIA-ALTA', quote: '"Quedó igual a como lo imaginé, excelente comunicación"', desc: 'PC Gamer con gabinete torre, ventilación optimizada e iluminación ARGB coordinada. Rendimiento para gaming en 1080p ultra sin problemas.' },
+    { title: 'Build RGB Completo', tag: 'ARMADO · FULL BUILD', quote: '"El mejor en lo que hace, muy honesto y puntual"', desc: 'Armado completo desde cero: selección de componentes, compra, ensamblaje y configuración. Cable management impecable y prueba de estrés aprobada.' },
+    { title: 'PC Gamer Gabinete Verde', tag: 'ARMADO · EDICIÓN ESPECIAL', quote: '"Me lo armó en un día y quedó increíble"', desc: 'Build con estética personalizada en verde, iluminación RGB coordinada con el tema y rendimiento optimizado para gaming. Un equipo único.' },
+    { title: 'Setup PC Oscuro', tag: 'ARMADO · DARK THEME', quote: '"Perfecto en todo sentido, lo recomiendo sin dudar"', desc: 'PC de alto rendimiento con estética dark, gabinete negro, iluminación tenue y componentes de calidad. Silencioso y potente a la vez.' },
   ];
 
   // Build dots
