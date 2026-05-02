@@ -25,7 +25,7 @@
     --text: #d4fff5;
     --muted: #5bcfb0;
     --accent: #00ffe0;
-    --accent2: #39ff14;
+    --accent2: #00ffe0;
     --border: rgba(0,255,224,0.2);
     --glow: 0 0 22px rgba(0,255,224,0.5);
     --nav: rgba(6,17,26,0.95);
@@ -180,6 +180,12 @@
     object-fit: contain; margin-bottom: 2rem;
     border-radius: 0;
     filter: drop-shadow(0 0 30px rgba(57,255,20,0.4));
+  }
+  @media (max-width: 768px) {
+    .hero-logo {
+      width: 200px; height: 200px;
+      margin-top: 1.5rem;
+    }
   }
   @keyframes pulse {
     0%,100% { box-shadow: 0 0 40px rgba(57,255,20,0.5), 0 0 80px rgba(57,255,20,0.2); }
@@ -434,11 +440,11 @@
   /* ─── WORK MODAL — MARKETPLACE STYLE ─── */
   .work-modal {
     display: none;
-    position: fixed; inset: 0; z-index: 1000;
-    background: rgba(0,0,0,0.88);
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(0,0,0,0.92);
     align-items: center; justify-content: center;
-    backdrop-filter: blur(12px);
-    padding: 1rem;
+    backdrop-filter: blur(16px);
+    padding: 1.5rem;
   }
   .work-modal.open { display: flex; }
 
@@ -446,15 +452,16 @@
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 16px;
-    max-width: 900px;
+    max-width: 1100px;
     width: 100%;
     overflow: hidden;
-    box-shadow: 0 0 80px rgba(57,255,20,0.15);
+    box-shadow: 0 0 100px rgba(57,255,20,0.2);
     animation: cardIn 0.38s cubic-bezier(0.34,1.56,0.64,1);
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 460px;
+    grid-template-columns: 1.1fr 0.9fr;
+    min-height: 560px;
+    max-height: 90vh;
   }
   :root[data-theme="light"] .work-card {
     box-shadow: 0 8px 60px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.25);
@@ -477,12 +484,19 @@
 
   /* Info: panel derecho */
   .work-card-body {
-    padding: 2rem 1.75rem;
+    padding: 2rem 1.75rem 1.5rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     gap: 0.5rem;
     position: relative;
+    overflow-y: auto;
+  }
+  .work-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
   }
 
   /* Tipo de servicio — chip estilo tag */
@@ -548,11 +562,45 @@
   }
   .work-card-close:hover { background: var(--accent); color: #000; }
 
-  /* Mobile: apilado vertical */
-  @media (max-width: 650px) {
-    .work-card { grid-template-columns: 1fr; min-height: auto; }
-    .work-card-img { min-height: 220px; border-right: none; border-bottom: 1px solid var(--border); }
-    .work-card-body { padding: 1.25rem; }
+  /* Mobile: apilado vertical, ocupa toda la pantalla */
+  @media (max-width: 768px) {
+    .work-modal {
+      padding: 0;
+      align-items: flex-end;
+    }
+    .work-card {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      height: 92vh;
+      max-height: 92vh;
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .work-card-img {
+      width: 100%;
+      height: 48vh;
+      min-height: 0;
+      flex-shrink: 0;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      object-fit: cover;
+    }
+    .work-card-body {
+      flex: 1;
+      padding: 1rem 1rem 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .work-card-content { gap: 0.35rem; }
+    .work-card-title { font-size: 0.95rem; }
+    .work-card-desc { font-size: 0.82rem; }
+    .modal-nav { padding: 0.6rem 0 0.25rem; }
   }
 
   /* Swipe hint */
@@ -560,6 +608,39 @@
     .carousel-btn { width: 40px; height: 40px; }
     .carousel-btn.prev { left: 0.5rem; }
     .carousel-btn.next { right: 0.5rem; }
+  }
+
+  /* ─── MODAL NAV ─── */
+  .modal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 0 0.25rem;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+  .modal-nav-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px;
+    background: rgba(0,0,0,0.4);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .modal-nav-btn:hover { background: var(--accent); color: #000; box-shadow: var(--glow); }
+  .modal-nav-btn svg { width: 18px; height: 18px; }
+  .modal-nav-counter {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    min-width: 50px;
+    text-align: center;
   }
 
   /* ─── CONTACT ─── */
@@ -718,7 +799,93 @@
     nav { padding: 0.75rem 1rem; }
   }
 
-  /* ─── OVERRIDES MODO CLARO (violeta + dorado) ─── */
+  /* ─── SIDEBAR EN MÓVIL: MENÚ HORIZONTAL ARRIBA ─── */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: none;
+      width: 100%;
+      height: auto;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      z-index: 200;
+      padding: 0;
+      background: rgba(5, 15, 5, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(57,255,20,0.12);
+    }
+
+    [data-theme="light"] .sidebar {
+      background: rgba(6, 17, 26, 0.96);
+      box-shadow: 0 2px 20px rgba(0,255,224,0.12);
+    }
+
+    .sidebar-item {
+      width: auto;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      padding: 0.6rem 0.2rem;
+      border-radius: 0;
+      border: none;
+      border-right: 1px solid var(--border);
+      background: transparent;
+      backdrop-filter: none;
+      white-space: nowrap;
+      overflow: visible;
+    }
+
+    .sidebar-item:last-child {
+      border-right: none;
+    }
+
+    .sidebar-item:hover {
+      width: auto;
+      gap: 0.2rem;
+      transform: none;
+      background: rgba(57,255,20,0.07);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    [data-theme="light"] .sidebar-item:hover {
+      background: rgba(0,255,224,0.07);
+    }
+
+    .sidebar-item svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .sidebar-label {
+      opacity: 1;
+      max-width: 100%;
+      font-size: 0.42rem;
+      display: block;
+    }
+
+    .sidebar-item:hover .sidebar-label {
+      opacity: 1;
+      max-width: 100%;
+    }
+
+    .hero {
+      padding-top: 6rem;
+    }
+
+    section {
+      scroll-margin-top: 56px;
+    }
+  }
+
+  /* ─── OVERRIDES MODO CLARO — TODO CELESTE ─── */
   [data-theme="light"] body { background: var(--bg); }
   [data-theme="light"] .service-card {
     background: rgba(0,255,224,0.04);
@@ -732,16 +899,34 @@
   [data-theme="light"] #why { background: transparent; }
   [data-theme="light"] #gallery { background: transparent; }
   [data-theme="light"] #contact { background: transparent; }
-  [data-theme="light"] footer { background: rgba(0,15,10,0.85); border-top-color: rgba(0,255,224,0.18); }
-  [data-theme="light"] .hero h1 { text-shadow: 0 0 30px rgba(0,255,224,0.5); }
+  [data-theme="light"] footer { background: rgba(0,10,15,0.85); border-top-color: rgba(0,255,224,0.18); }
+  [data-theme="light"] .hero h1 { color: var(--accent); text-shadow: 0 0 30px rgba(0,255,224,0.5); }
+  [data-theme="light"] .hero h1 span { color: var(--accent); }
+  [data-theme="light"] .tagline { color: var(--muted); }
+  [data-theme="light"] .section-title { color: var(--accent); }
+  [data-theme="light"] .why-num { color: var(--accent); text-shadow: var(--glow); }
+  [data-theme="light"] .service-card h3 { color: var(--accent); }
+  [data-theme="light"] .service-icon svg { stroke: var(--accent); }
+  [data-theme="light"] .divider { background: linear-gradient(90deg, transparent, var(--accent), transparent); }
   [data-theme="light"] .btn-primary { background: var(--accent); color: #06111a; box-shadow: 0 0 20px rgba(0,255,224,0.4); }
   [data-theme="light"] .btn-primary:hover { box-shadow: 0 0 40px rgba(0,255,224,0.7); }
+  [data-theme="light"] .btn-outline { color: var(--accent); border-color: var(--accent); }
+  [data-theme="light"] .btn-outline:hover { background: var(--accent); color: #06111a; }
+  [data-theme="light"] .sidebar-item { color: var(--accent); border-color: var(--border); }
+  [data-theme="light"] .sidebar-item svg { stroke: var(--accent); }
+  [data-theme="light"] .sidebar-item:hover { border-color: var(--accent); box-shadow: var(--glow); }
   [data-theme="light"] .work-card-tag { background: var(--accent); color: #06111a; }
   [data-theme="light"] .carousel-slide { background: #04101a; }
   [data-theme="light"] .carousel-dot { border-color: rgba(0,255,224,0.3); }
-  [data-theme="light"] .carousel-dot.active { box-shadow: 0 0 10px rgba(0,255,224,0.6); }
-  [data-theme="light"] .carousel-thumb.active { box-shadow: 0 0 12px rgba(0,255,224,0.4); }
+  [data-theme="light"] .carousel-dot.active { background: var(--accent); box-shadow: 0 0 10px rgba(0,255,224,0.6); }
+  [data-theme="light"] .carousel-thumb.active { border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,224,0.4); }
+  [data-theme="light"] .carousel-btn { border-color: var(--accent); color: var(--accent); }
+  [data-theme="light"] .carousel-btn:hover { background: var(--accent); color: #06111a; box-shadow: 0 0 25px rgba(0,255,224,0.5); }
+  [data-theme="light"] .carousel-counter { color: var(--accent); border-color: var(--border); }
   [data-theme="light"] .wa-fab { box-shadow: 0 4px 20px rgba(0,255,224,0.4); }
+  [data-theme="light"] .work-card { border-color: var(--border); box-shadow: 0 8px 60px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.25); }
+  [data-theme="light"] .work-card-img { border-right-color: var(--border); }
+  [data-theme="light"] #themeFabToggle { color: var(--accent); border-color: var(--border); }
 </style>
 </head>
 <body>
@@ -805,12 +990,12 @@
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 17h20"/></svg></div>
         <h3>ARMADO DE PC</h3>
-        <p>Construimos tu equipo a medida según tu presupuesto y necesidades: gaming, trabajo, diseño o programación. Selección de componentes, ensamblaje y prueba de estrés incluidos.</p>
+        <p>Te ayudo a ensamblar tu equipo a medida según tu presupuesto y espectativas (gaming, trabajo o diseño). Incluyo ensamblaje experto y pruebas de estrés para garantizar estabilidad total.</p>
       </div>
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"/><path d="M9 20h6"/></svg></div>
         <h3>COTIZACIONES</h3>
-        <p>Asesoría personalizada para armar tu PC ideal. Comparamos precios del mercado chileno y te entregamos la mejor relación calidad/precio sin compromiso de compra.</p>
+        <p>Te asesoro personalmente para encontrar los mejores componentes al precio más bajo del mercado. Maximizo tu inversión con la mejor relación calidad-precio sin compromisos.</p>
       </div>
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M14.4 14.3L9.7 9.6"/><path d="M18.9 10.1a4.5 4.5 0 0 1-6.4-6.4"/><path d="M5.1 13.9a4.5 4.5 0 0 1 6.4 6.4"/><circle cx="12" cy="12" r="10"/></svg></div>
@@ -820,17 +1005,17 @@
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M10 19H5c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2h4V3c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v2h4c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2h-5v2c0 1.1-.9 2-2 2h-2c-1.1 0-2-.9-2-2v-2z"/></svg></div>
         <h3>UPGRADE</h3>
-        <p>¿Tu PC se quedó corto? Mejoramos RAM, almacenamiento SSD/NVMe, GPU o CPU para que tu equipo rinda al máximo sin tener que cambiar todo.</p>
+        <p>¿Tu PC necesita más potencia? Te ayudo a seleccionar el componente ideal según tus necesidades. Me encargo de buscar la pieza con mejor compatibilidad y precio en el mercado, y realizo la instalación para maximizar el rendimiento de tu inversión.</p>
       </div>
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
         <h3>DIAGNÓSTICO</h3>
-        <p>Identificamos el problema exacto de tu equipo: pantallazos azules, recalentamiento, arranques fallidos, componentes quemados. Presupuesto sin costo.</p>
+        <p>Identifico la falla exacta de tu equipo, ya sean pantallazos azules, sobrecalentamiento o errores de arranque. Te entrego un informe técnico preciso y la solución más eficiente para que recuperes tu herramienta de trabajo o juego lo antes posible.</p>
       </div>
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v3h18V5zm0 5H3v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9z"/><rect x="2" y="16" width="20" height="2"/></svg></div>
-        <h3>PC GAMER</h3>
-        <p>Especialistas en builds de alto rendimiento para gaming. Cable management, iluminación RGB, cooling personalizado y benchmarks para que aproveches cada frame.</p>
+        <h3>ASESORÍA</h3>
+        <p>Te enseño a dominar tu equipo. Te ayudo a instalar aplicaciones esenciales de fuentes seguras y te comparto trucos y atajos para que seas mucho más productivo.</p>
       </div>
     </div>
   </div>
@@ -902,7 +1087,6 @@
         <div class="carousel-slide"><img src="./Feedback/SnapInsta.to_655226020_18094345324843970_8152732067528020249_n.jpg" alt="Trabajo 10" loading="lazy"></div>
         <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2021-07-26 at 14.22.47.jpeg" alt="Trabajo 11" loading="lazy"></div>
         <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2021-07-26 at 14.42.48.jpeg" alt="Trabajo 12" loading="lazy"></div>
-        <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2026-04-26 at 02.11.11 (1).jpeg" alt="Trabajo 13" loading="lazy"></div>
         <div class="carousel-slide"><img src="./Feedback/WhatsApp Image 2026-04-26 at 02.11.11.jpeg" alt="Trabajo 14" loading="lazy"></div>
       </div>
       <!-- Arrows -->
@@ -923,20 +1107,6 @@
     <div class="carousel-thumbs" id="carThumbs"></div>
   </div>
 
-  <!-- Work Modal -->
-  <div class="work-modal" id="workModal">
-    <div class="work-card" id="workCard">
-      <img class="work-card-img" id="modalImg" src="" alt="">
-      <div class="work-card-body">
-        <button class="work-card-close" id="modalClose">✕</button>
-        <div class="work-card-tag" id="modalTag">TRABAJO REALIZADO</div>
-        <div class="work-card-title" id="modalTitle"></div>
-        <div class="work-card-divider"></div>
-        <blockquote class="work-card-quote" id="modalQuote"></blockquote>
-        <p class="work-card-desc" id="modalDesc"></p>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- Contact -->
@@ -1009,7 +1179,7 @@
               <option>Mantención</option>
               <option>Upgrade</option>
               <option>Diagnóstico</option>
-              <option>PC Gamer</option>
+              <option>Asesoría</option>
             </select>
           </div>
           <div class="form-group">
@@ -1086,6 +1256,32 @@
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
   </a>
+</div>
+
+<!-- Work Modal — fuera de cualquier sección para evitar stacking context -->
+<div class="work-modal" id="workModal">
+  <div class="work-card" id="workCard">
+    <img class="work-card-img" id="modalImg" src="" alt="">
+    <div class="work-card-body">
+      <button class="work-card-close" id="modalClose">✕</button>
+      <div class="work-card-content">
+        <div class="work-card-tag" id="modalTag">TRABAJO REALIZADO</div>
+        <div class="work-card-title" id="modalTitle"></div>
+        <div class="work-card-divider"></div>
+        <blockquote class="work-card-quote" id="modalQuote"></blockquote>
+        <p class="work-card-desc" id="modalDesc"></p>
+      </div>
+      <div class="modal-nav">
+        <button class="modal-nav-btn" id="modalPrev" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="modal-nav-counter" id="modalCounter">1 / 13</span>
+        <button class="modal-nav-btn" id="modalNext" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1315,7 +1511,6 @@ themeFab.addEventListener('click', () => {
     { title: 'Notebook HP Reparada', tag: 'REPARACIÓN · NOTEBOOK', quote: '"Súper contento, lo recomiendo a todos mis amigos"', desc: 'Notebook HP con falla de sistema operativo y disco en mal estado. Se reemplazó el disco, se instaló Windows actualizado y se realizó limpieza general.' },
     { title: 'PC Gamer con Gabinete RGB', tag: 'ARMADO · GAMA MEDIA-ALTA', quote: '"Quedó igual a como lo imaginé, excelente comunicación"', desc: 'PC Gamer con gabinete torre, ventilación optimizada e iluminación ARGB coordinada. Rendimiento para gaming en 1080p ultra sin problemas.' },
     { title: 'Build RGB Completo', tag: 'ARMADO · FULL BUILD', quote: '"El mejor en lo que hace, muy honesto y puntual"', desc: 'Armado completo desde cero: selección de componentes, compra, ensamblaje y configuración. Cable management impecable y prueba de estrés aprobada.' },
-    { title: 'PC Gamer Gabinete Verde', tag: 'ARMADO · EDICIÓN ESPECIAL', quote: '"Me lo armó en un día y quedó increíble"', desc: 'Build con estética personalizada en verde, iluminación RGB coordinada con el tema y rendimiento optimizado para gaming. Un equipo único.' },
     { title: 'Setup PC Oscuro', tag: 'ARMADO · DARK THEME', quote: '"Perfecto en todo sentido, lo recomiendo sin dudar"', desc: 'PC de alto rendimiento con estética dark, gabinete negro, iluminación tenue y componentes de calidad. Silencioso y potente a la vez.' },
   ];
 
@@ -1368,28 +1563,51 @@ themeFab.addEventListener('click', () => {
   });
 
   // ─ Modal card al hacer clic en la imagen
+  let modalIndex = 0;
+
+  function openModal(i) {
+    modalIndex = (i + total) % total;
+    const t = trabajos[modalIndex] || {};
+    document.getElementById('modalImg').src = slides[modalIndex].querySelector('img').src;
+    document.getElementById('modalTag').textContent = t.tag || 'TRABAJO REALIZADO';
+    document.getElementById('modalTitle').textContent = t.title || `Trabajo ${modalIndex + 1}`;
+    document.getElementById('modalQuote').textContent = t.quote || '';
+    document.getElementById('modalDesc').textContent = t.desc || '';
+    document.getElementById('modalCounter').textContent = `${modalIndex + 1} / ${total}`;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    clearInterval(autoTimer);
+  }
+
   slides.forEach((slide, i) => {
     slide.style.cursor = 'pointer';
-    slide.addEventListener('click', () => {
-      const t = trabajos[i] || {};
-      document.getElementById('modalImg').src = slide.querySelector('img').src;
-      document.getElementById('modalTag').textContent = t.tag || 'TRABAJO REALIZADO';
-      document.getElementById('modalTitle').textContent = t.title || `Trabajo ${i + 1}`;
-      document.getElementById('modalQuote').textContent = t.quote || '';
-      document.getElementById('modalDesc').textContent = t.desc || '';
-      modal.classList.add('open');
-      clearInterval(autoTimer); // pausar autoplay mientras el modal está abierto
-    });
+    slide.addEventListener('click', () => openModal(i));
+  });
+
+  document.getElementById('modalPrev').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openModal(modalIndex - 1);
+  });
+  document.getElementById('modalNext').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openModal(modalIndex + 1);
   });
 
   function closeModal() {
     modal.classList.remove('open');
+    document.body.style.overflow = '';
     resetAuto();
   }
 
   document.getElementById('modalClose').addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if (modal.classList.contains('open')) {
+      if (e.key === 'ArrowLeft') openModal(modalIndex - 1);
+      if (e.key === 'ArrowRight') openModal(modalIndex + 1);
+    }
+  });
 
   resetAuto();
 })();
@@ -1403,7 +1621,7 @@ document.getElementById('sendWa').addEventListener('click', () => {
     document.getElementById('form-msg').textContent = '⚠ Por favor completa todos los campos.';
     return;
   }
-  const text = encodeURIComponent(`Hola Jemba Tech! 👋\nNombre: ${name}\nServicio: ${service}\n${msg}`);
+  const text = encodeURIComponent(`Hola Jemba! 👋\nNombre: ${name}\nServicio: ${service}\n${msg}`);
   window.open(`https://wa.me/56973752851?text=${text}`, '_blank');
   document.getElementById('form-msg').textContent = '✅ Redirigiendo a WhatsApp...';
   setTimeout(() => { document.getElementById('form-msg').textContent = ''; }, 3000);
