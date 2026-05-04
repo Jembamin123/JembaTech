@@ -79,17 +79,39 @@
     display: flex;
     opacity: 1;
   }
+
+  @keyframes logoFloat {
+    0%   { transform: scale(1) rotate(0deg) translateY(0px); filter: drop-shadow(0 0 8px rgba(57,255,20,0.7)); }
+    20%  { transform: scale(1.08) rotate(6deg) translateY(-3px); filter: drop-shadow(0 0 16px rgba(57,255,20,1)); }
+    40%  { transform: scale(1.05) rotate(-5deg) translateY(2px); filter: drop-shadow(0 0 22px rgba(57,255,20,0.9)); }
+    60%  { transform: scale(1.1) rotate(4deg) translateY(-2px); filter: drop-shadow(0 0 18px rgba(57,255,20,1)); }
+    80%  { transform: scale(1.04) rotate(-3deg) translateY(1px); filter: drop-shadow(0 0 12px rgba(57,255,20,0.8)); }
+    100% { transform: scale(1.07) rotate(2deg) translateY(-1px); filter: drop-shadow(0 0 16px rgba(57,255,20,0.9)); }
+  }
+  @keyframes logoFloatLight {
+    0%   { transform: scale(1) rotate(0deg) translateY(0px); filter: drop-shadow(0 0 8px rgba(0,255,224,0.7)); }
+    20%  { transform: scale(1.08) rotate(6deg) translateY(-3px); filter: drop-shadow(0 0 16px rgba(0,255,224,1)); }
+    40%  { transform: scale(1.05) rotate(-5deg) translateY(2px); filter: drop-shadow(0 0 22px rgba(0,255,224,0.9)); }
+    60%  { transform: scale(1.1) rotate(4deg) translateY(-2px); filter: drop-shadow(0 0 18px rgba(0,255,224,1)); }
+    80%  { transform: scale(1.04) rotate(-3deg) translateY(1px); filter: drop-shadow(0 0 12px rgba(0,255,224,0.8)); }
+    100% { transform: scale(1.07) rotate(2deg) translateY(-1px); filter: drop-shadow(0 0 16px rgba(0,255,224,0.9)); }
+  }
   .nav-logo img {
     width: 56px; height: 56px;
-    border-radius: 0;
+    border-radius: 50%;
     border: none;
     box-shadow: none;
     opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
+    transition: opacity 0.3s, transform 0.4s, filter 0.4s;
     object-fit: contain;
   }
   nav.scrolled .nav-logo img { opacity: 1; }
-  .nav-logo:hover img { transform: scale(1.08); }
+  .nav-logo:hover img {
+    animation: logoFloat 1.4s ease-in-out infinite alternate;
+  }
+  [data-theme="light"] .nav-logo:hover img {
+    animation: logoFloatLight 1.4s ease-in-out infinite alternate;
+  }
   .nav-logo span { display: none; }
   .nav-links { display: none; }
   .nav-links a { display: none; }
@@ -183,8 +205,8 @@
   }
   @media (max-width: 768px) {
     .hero-logo {
-      width: 200px; height: 200px;
-      margin-top: 1.5rem;
+      width: 160px; height: 160px;
+      margin-top: 3.5rem;
     }
   }
   @keyframes pulse {
@@ -290,16 +312,17 @@
   .why-item p { color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; letter-spacing: 1px; }
 
   /* ─── GALLERY / CAROUSEL ─── */
-  #gallery { background: var(--bg); }
+  #gallery { background: transparent; }
 
   .carousel-wrapper {
     position: relative;
     overflow: hidden;
     border-radius: 16px;
     border: 1px solid var(--border);
-    box-shadow: 0 0 60px rgba(57,255,20,0.08);
+    box-shadow: 0 0 40px rgba(57,255,20,0.18), inset 0 0 60px rgba(0,0,0,0.4);
     margin-top: 2rem;
-    height: 500px; /* altura fija para llenar bien el panel */
+    height: 500px;
+    background: rgba(0,0,0,0.72);
   }
 
   .carousel-track {
@@ -314,11 +337,11 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: #080f08;
+    background: rgba(0,0,0,0.72);
   }
 
   [data-theme="light"] .carousel-slide {
-    background: #0a1520;
+    background: rgba(0,10,20,0.72);
   }
 
   @media (max-width: 768px) {
@@ -883,6 +906,11 @@
     section {
       scroll-margin-top: 56px;
     }
+
+    /* Ocultar nav-logo en móvil — el sidebar ya cubre esa función */
+    nav, nav.scrolled {
+      display: none !important;
+    }
   }
 
   /* ─── OVERRIDES MODO CLARO — TODO CELESTE ─── */
@@ -927,6 +955,27 @@
   [data-theme="light"] .work-card { border-color: var(--border); box-shadow: 0 8px 60px rgba(0,229,255,0.2), 0 0 0 1px rgba(0,229,255,0.25); }
   [data-theme="light"] .work-card-img { border-right-color: var(--border); }
   [data-theme="light"] #themeFabToggle { color: var(--accent); border-color: var(--border); }
+
+  /* ─── LOGO CLICK ANIMATION ─── */
+  @keyframes logoSpin {
+    0%   { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 30px rgba(57,255,20,0.4)); }
+    20%  { transform: scale(1.15) rotate(15deg); filter: drop-shadow(0 0 60px rgba(57,255,20,0.9)) brightness(1.4); }
+    40%  { transform: scale(0.9) rotate(-10deg); filter: drop-shadow(0 0 80px rgba(57,255,20,1)); }
+    60%  { transform: scale(1.1) rotate(8deg); filter: drop-shadow(0 0 50px rgba(57,255,20,0.8)) brightness(1.2); }
+    80%  { transform: scale(0.97) rotate(-3deg); filter: drop-shadow(0 0 35px rgba(57,255,20,0.6)); }
+    100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 30px rgba(57,255,20,0.4)); }
+  }
+  @keyframes logoSpinLight {
+    0%   { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 30px rgba(0,255,224,0.4)); }
+    20%  { transform: scale(1.15) rotate(15deg); filter: drop-shadow(0 0 60px rgba(0,255,224,0.9)) brightness(1.4); }
+    40%  { transform: scale(0.9) rotate(-10deg); filter: drop-shadow(0 0 80px rgba(0,255,224,1)); }
+    60%  { transform: scale(1.1) rotate(8deg); filter: drop-shadow(0 0 50px rgba(0,255,224,0.8)) brightness(1.2); }
+    80%  { transform: scale(0.97) rotate(-3deg); filter: drop-shadow(0 0 35px rgba(0,255,224,0.6)); }
+    100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 30px rgba(0,255,224,0.4)); }
+  }
+  .hero-logo.logo-anim { animation: logoSpin 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  [data-theme="light"] .hero-logo.logo-anim { animation: logoSpinLight 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
 </style>
 </head>
 <body>
@@ -970,7 +1019,7 @@
 
 <!-- Hero -->
 <section class="hero">
-  <img class="hero-logo" src="./Jemba Tech Logo Circular.png" alt="Jemba Tech Logo">
+  <img class="hero-logo" id="heroLogo" src="./Jemba Tech Logo Circular.png" alt="Jemba Tech Logo" style="cursor:pointer">
   <h1><span>JEMBA</span> TECH</h1>
   <p class="tagline">Armado · Mantención · Upgrade de PC's</p>
   <p style="color:var(--muted);margin-top:0.5rem;letter-spacing:2px;font-size:0.9rem">Santiago / Valparaíso</p>
@@ -1426,8 +1475,17 @@ if (!mainNav.querySelector('.nav-logo')) {
   navLogo.className = 'nav-logo';
   navLogo.href = '#';
   navLogo.setAttribute('aria-label', 'Volver al inicio');
-  navLogo.innerHTML = `<img src="./Jemba Tech Logo Circular.png" alt="Jemba Tech"><span>JEMBA TECH</span>`;
+  navLogo.innerHTML = `<img src="./Jemba Tech Logo Circular.png" alt="Jemba Tech" id="navLogoImg"><span>JEMBA TECH</span>`;
   mainNav.appendChild(navLogo);
+  navLogo.addEventListener('click', function(e) {
+    const img = document.getElementById('navLogoImg');
+    if (img) {
+      img.classList.remove('logo-anim');
+      void img.offsetWidth;
+      img.classList.add('logo-anim');
+      img.addEventListener('animationend', () => img.classList.remove('logo-anim'), { once: true });
+    }
+  });
 }
 
 // ─── SIDEBAR MENU ─── 
@@ -1626,6 +1684,15 @@ document.getElementById('sendWa').addEventListener('click', () => {
   document.getElementById('form-msg').textContent = '✅ Redirigiendo a WhatsApp...';
   setTimeout(() => { document.getElementById('form-msg').textContent = ''; }, 3000);
 });
+
+  // ─── LOGO CLICK: animación + scroll top ───
+  document.getElementById('heroLogo').addEventListener('click', function() {
+    this.classList.remove('logo-anim');
+    void this.offsetWidth; // reflow para reiniciar animación
+    this.classList.add('logo-anim');
+    this.addEventListener('animationend', () => this.classList.remove('logo-anim'), { once: true });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 </script>
 </body>
 </html>
