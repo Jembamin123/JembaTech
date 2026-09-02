@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.angular/
+.venv/
+__pycache__/
+.env
+.npm-cache/
+*.log

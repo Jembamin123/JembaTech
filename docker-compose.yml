@@ -1,0 +1,47 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: jemba_cotiza
+      POSTGRES_USER: jemba
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jemba_dev}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U jemba -d jemba_cotiza']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  python-service:
+    build: ./python-service
+    environment:
+      PORT: 8000
+    ports:
+      - '8000:8000'
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://jemba:${POSTGRES_PASSWORD:-jemba_dev}@database:5432/jemba_cotiza
+      PYTHON_SERVICE_URL: http://python-service:8000
+    depends_on:
+      database:
+        condition: service_healthy
+      python-service:
+        condition: service_started
+    ports:
+      - '3000:3000'
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - '4200:80'
+
+volumes:
+  postgres_data:
