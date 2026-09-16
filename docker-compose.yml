@@ -22,6 +22,18 @@ services:
     ports:
       - '8000:8000'
 
+  migrate:
+    build:
+      context: ./backend
+      target: build
+    command: ['npx', 'prisma', 'migrate', 'deploy']
+    environment:
+      DATABASE_URL: postgresql://jemba:${POSTGRES_PASSWORD:-jemba_dev}@database:5432/jemba_cotiza
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: 'no'
+
   backend:
     build: ./backend
     environment:
@@ -29,8 +41,8 @@ services:
       DATABASE_URL: postgresql://jemba:${POSTGRES_PASSWORD:-jemba_dev}@database:5432/jemba_cotiza
       PYTHON_SERVICE_URL: http://python-service:8000
     depends_on:
-      database:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       python-service:
         condition: service_started
     ports:

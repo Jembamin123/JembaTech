@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Quote {
+  id                        String   @id @default(uuid())
+  intendedUse               String   @map("intended_use")
+  budget                    Int
+  totalPrice                Int      @map("total_price")
+  ramGb                     Int      @map("ram_gb")
+  storageGb                 Int      @map("storage_gb")
+  psuWatts                  Int      @map("psu_watts")
+  estimatedConsumptionWatts Int      @map("estimated_consumption_watts")
+  score                     Int
+  level                     String
+  warnings                  Json
+  recommendations           Json
+  explanation               String
+  createdAt                 DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("quotes")
+}

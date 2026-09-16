@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { EvaluationResult, EvaluationService } from './evaluation.service';
 
 type Brand='AMD'|'Intel'; type Tier='Entrada'|'Media'|'Alta';
 interface CPU{id:string;brand:Brand;tier:Tier;name:string;socket:string;ram:'DDR4'|'DDR5';igpu:boolean;power:number;price:number;recommended?:boolean}
@@ -11,7 +12,8 @@ interface CaseChoice extends Choice{forms:('ATX'|'mATX')[];gpuClearance:number;f
 
 @Component({selector:'app-root',standalone:true,imports:[CommonModule,FormsModule],templateUrl:'./app.component.html',styleUrl:'./app.component.scss'})
 export class AppComponent{
-  step=1;brand:Brand='AMD';tier:Tier='Media';cpu?:CPU;gpu?:GPU;board?:Board;wantWifi=true;ramGb=16;storage?:Choice;extraHdd=false;caseChoice?:CaseChoice;psu?:Choice;cooling?:Choice;fanCount=2;finished=false;
+  private readonly evaluationService = inject(EvaluationService);
+  step=1;brand:Brand='AMD';tier:Tier='Media';cpu?:CPU;gpu?:GPU;board?:Board;wantWifi=true;ramGb=16;storage?:Choice;extraHdd=false;caseChoice?:CaseChoice;psu?:Choice;cooling?:Choice;fanCount=2;finished=false; evaluation?:EvaluationResult; evaluationError='' ; evaluating=false;
   cpus:CPU[]=[
     {id:'5600g',brand:'AMD',tier:'Entrada',name:'Ryzen 5 5600G',socket:'AM4',ram:'DDR4',igpu:true,power:65,price:129990},
     {id:'5600',brand:'AMD',tier:'Entrada',name:'Ryzen 5 5600',socket:'AM4',ram:'DDR4',igpu:false,power:65,price:119990},
@@ -43,5 +45,9 @@ export class AppComponent{
   back(){this.finished=false;this.step=Math.max(1,this.step-1)}
   go(n:number){if(n<this.step){this.finished=false;this.step=n}}
   psuEnough(p:Choice){return Number(p.id)>=this.recommendedWatts}
-  finish(){this.finished=true;this.step=7}
+  finish(){
+    if(!this.cpu||!this.gpu||!this.storage||!this.psu)return;
+    this.evaluating=true; this.evaluationError=''; this.evaluation=undefined;
+    this.evaluationService.evaluate({budget:this.total,intended_use:this.tier==='Alta'?'gaming':'programacion',total_price:this.total,ram_gb:this.ramGb,storage_gb:this.storage.id==='nvme2'||this.storage.id==='hdd2'?2000:1000,psu_watts:Number(this.psu.id),estimated_consumption_watts:this.cpu.power+this.gpu.power+100}).subscribe({next:result=>{this.evaluation=result;this.evaluating=false;this.finished=true;this.step=7;},error:()=>{this.evaluating=false;this.evaluationError='No fue posible conectar con el evaluador. Inicia Docker Compose o el backend y vuelve a intentarlo.';}})
+  }
 }

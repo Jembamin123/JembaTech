@@ -22,7 +22,8 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "jemba-cotiza:build"
+            "buildTarget": "jemba-cotiza:build",
+            "proxyConfig": "proxy.conf.json"
           }
         }
       }

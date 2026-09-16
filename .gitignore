@@ -6,3 +6,6 @@ __pycache__/
 .env
 .npm-cache/
 *.log
+infra/.terraform/
+infra/terraform.tfvars
+infra/generated/

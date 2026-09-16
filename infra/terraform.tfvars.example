@@ -1,0 +1,4 @@
+environment        = "staging"
+frontend_url       = "https://staging.example.com"
+backend_url        = "https://api-staging.example.com/api"
+python_service_url = "http://python-service:8000"
