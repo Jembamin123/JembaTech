@@ -4,8 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jemba Tech – Armado y Mantención de PC</title>
+<script>
+  // Restaurar el tema antes del primer render evita un destello al navegar.
+  try {
+    const temaGuardado = localStorage.getItem('jembatech-tema');
+    if (temaGuardado === 'dark' || temaGuardado === 'light') {
+      document.documentElement.setAttribute('data-theme', temaGuardado);
+    }
+  } catch (_) {}
+
+  // La portada heredada solo pertenece a la ruta raíz. Esta marca se aplica
+  // antes del primer render para que nunca aparezca detrás de una ruta Angular.
+  if (window.location.pathname !== '/') document.documentElement.classList.add('ruta-angular');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+  html.ruta-angular body > :not(app-root):not(script) { display: none !important; }
+  html.ruta-angular app-root { display: block; min-height: 100vh; }
   :root[data-theme="dark"] {
     --bg: #050f05;
     --bg2: #0a1a0a;
@@ -75,10 +90,7 @@
     text-decoration: none;
     cursor: pointer;
   }
-  nav.scrolled .nav-logo {
-    display: flex;
-    opacity: 1;
-  }
+  nav.scrolled .nav-logo { display: none; opacity: 0; }
 
   @keyframes logoFloat {
     0%   { transform: scale(1) rotate(0deg) translateY(0px); filter: drop-shadow(0 0 8px rgba(57,255,20,0.7)); }
@@ -112,6 +124,8 @@
   [data-theme="light"] .nav-logo:hover img {
     animation: logoFloatLight 1.4s ease-in-out infinite alternate;
   }
+  .hero-logo:hover { animation: logoFloat 1.4s ease-in-out infinite alternate; }
+  [data-theme="light"] .hero-logo:hover { animation: logoFloatLight 1.4s ease-in-out infinite alternate; }
   .nav-logo span { display: none; }
   .nav-links { display: none; }
   .nav-links a { display: none; }
@@ -199,7 +213,8 @@
   }
   .hero-logo {
     width: 340px; height: 340px;
-    object-fit: contain; margin-bottom: 2rem;
+    object-fit: contain; object-position: center; display: block;
+    margin: 0 auto 2rem;
     border-radius: 0;
     filter: drop-shadow(0 0 30px rgba(57,255,20,0.4));
   }
@@ -230,7 +245,7 @@
     letter-spacing: 3px;
     text-transform: uppercase;
   }
-  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 2.5rem; }
+  .hero-btns { width: min(100%, 680px); display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; align-items: center; margin: 2.5rem auto 0; }
   .btn {
     display: inline-flex; align-items: center; gap: 0.5rem;
     padding: 0.85rem 2rem; border-radius: 4px;
@@ -667,7 +682,33 @@
   }
 
   /* ─── CONTACT ─── */
-  #contact { background: var(--bg2); }
+  #contact {
+    background: transparent;
+  }
+  .contact-panel {
+    position: relative;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid rgba(57,255,20,0.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(6,26,10,0.46), rgba(2,13,5,0.38));
+    box-shadow: 0 26px 80px rgba(0,0,0,0.52), inset 0 1px 0 rgba(57,255,20,0.1);
+    backdrop-filter: blur(3px);
+    overflow: hidden;
+  }
+  .contact-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(90deg, var(--accent), transparent 28%) top left / 35% 1px no-repeat,
+      linear-gradient(270deg, var(--accent), transparent 28%) bottom right / 35% 1px no-repeat;
+    opacity: .7;
+  }
+  .contact-panel > * { position: relative; z-index: 1; }
+  .contact-panel-head { text-align: center; margin-bottom: 2.4rem; }
+  .contact-panel-head .divider { margin: .8rem auto; }
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
   @media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; } }
   .contact-info h3 { font-family: 'Orbitron', sans-serif; color: var(--accent2); margin-bottom: 1.5rem; letter-spacing: 2px; }
@@ -786,8 +827,9 @@
   /* ─── FOOTER ─── */
   footer {
     position: relative; z-index: 1;
-    background: var(--bg);
+    background: rgba(2,13,5,0.42);
     border-top: 1px solid var(--border);
+    backdrop-filter: blur(3px);
     text-align: center; padding: 2rem 1rem;
     color: var(--muted); font-size: 0.85rem; letter-spacing: 1px;
   }
@@ -927,7 +969,12 @@
   [data-theme="light"] #why { background: transparent; }
   [data-theme="light"] #gallery { background: transparent; }
   [data-theme="light"] #contact { background: transparent; }
-  [data-theme="light"] footer { background: rgba(0,10,15,0.85); border-top-color: rgba(0,255,224,0.18); }
+  [data-theme="light"] .contact-panel {
+    border-color: rgba(0,255,224,0.34);
+    background: linear-gradient(135deg, rgba(3,28,37,0.46), rgba(2,14,22,0.38));
+    box-shadow: 0 26px 80px rgba(0,0,0,0.52), inset 0 1px 0 rgba(0,255,224,0.12);
+  }
+  [data-theme="light"] footer { background: rgba(2,14,22,0.42); border-top-color: rgba(0,255,224,0.18); }
   [data-theme="light"] .hero h1 { color: var(--accent); text-shadow: 0 0 30px rgba(0,255,224,0.5); }
   [data-theme="light"] .hero h1 span { color: var(--accent); }
   [data-theme="light"] .tagline { color: var(--muted); }
@@ -976,12 +1023,64 @@
   .hero-logo.logo-anim { animation: logoSpin 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
   [data-theme="light"] .hero-logo.logo-anim { animation: logoSpinLight 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 
+.nav-account{position:fixed;right:1rem;top:50%;transform:translateY(-50%);z-index:260;display:flex;align-items:center}.nav-account-trigger{display:flex;align-items:center;justify-content:flex-start;gap:.55rem;width:46px;height:46px;overflow:hidden;border:1px solid var(--border);background:rgba(0,12,5,.78);color:var(--accent);padding:.7rem 1rem;border-radius:6px;cursor:pointer;font:600 .58rem 'Orbitron';letter-spacing:1px;white-space:nowrap;backdrop-filter:blur(12px);transition:all .3s cubic-bezier(.34,1.56,.64,1)}.nav-account:hover .nav-account-trigger{width:180px;border-color:var(--accent);box-shadow:var(--glow);gap:.75rem}.nav-account-trigger:hover{border-color:var(--accent);box-shadow:var(--glow)}.nav-avatar{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#0c5b23);color:#001b05;font:800 .45rem 'Orbitron';flex:none}.nav-account-trigger #accountLabel{opacity:0;max-width:0;overflow:hidden;transition:opacity .25s .05s,max-width .3s}.nav-account:hover .nav-account-trigger #accountLabel{opacity:1;max-width:125px}.nav-account-menu{position:absolute;right:0;top:calc(100% + .6rem);width:190px;padding:.5rem;border:1px solid var(--border);border-radius:10px;background:rgba(3,16,8,.96);box-shadow:var(--glow);display:none}.nav-account-menu.open{display:grid;gap:.2rem}.nav-account-menu button{border:0;background:transparent;color:var(--text);text-align:left;padding:.65rem .7rem;cursor:pointer;font:600 .55rem 'Orbitron';letter-spacing:1px}.nav-account-menu button:hover{color:var(--accent);background:rgba(57,255,20,.08)}.account-screen{position:fixed;inset:0;z-index:240;background:rgba(1,9,4,.86);backdrop-filter:blur(16px);display:grid;place-items:center;padding:1rem}.account-dialog{position:relative;width:min(470px,100%);padding:2rem;border:1px solid var(--border);border-radius:14px;background:var(--card);box-shadow:0 25px 100px rgba(0,0,0,.55)}.account-close{position:absolute;right:1rem;top:.7rem;border:0;background:none;color:var(--muted);font-size:1.7rem;cursor:pointer}.account-kicker{color:var(--accent);font:600 .58rem 'Orbitron';letter-spacing:2px}.account-dialog h2{font:800 1.55rem 'Orbitron';color:var(--text);margin:.7rem 0}.account-dialog>p{color:var(--muted);font-size:.85rem}.account-dialog form{display:grid;gap:.7rem;margin:1.2rem 0}.account-dialog input{border:1px solid var(--border);background:rgba(0,0,0,.28);color:var(--text);padding:.8rem;font:400 .8rem 'Exo 2'}.account-dialog .next{margin:0;width:100%}.account-role{color:var(--accent)!important;font:600 .7rem 'Orbitron'}.saved-quote{display:grid;gap:.25rem;padding:.7rem;margin-top:.55rem;border:1px solid var(--border);border-radius:7px}.saved-quote b{color:var(--accent);font:600 .65rem 'Orbitron'}.saved-quote span,.saved-quote small{color:var(--muted);font-size:.75rem}
+  /* Account control: circular avatar at top-right with animated tooltip/menu. */
+  .nav-account{position:fixed!important;right:1.5rem!important;top:1.35rem!important;transform:none!important;z-index:260;display:flex;align-items:center}
+  .nav-account-trigger{position:relative!important;display:grid!important;place-items:center!important;width:46px!important;height:46px!important;overflow:visible!important;padding:0!important;border-radius:50%!important;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease!important}
+  .nav-account-trigger:hover{transform:scale(1.08);border-color:var(--accent);box-shadow:var(--glow)}
+  .nav-avatar{width:22px!important;height:22px!important}
+  .nav-avatar{font-size:.5rem!important;line-height:1!important;text-align:center!important}
+  .nav-avatar.admin-avatar{background:linear-gradient(135deg,#d5ff5a,var(--accent))!important;box-shadow:0 0 12px rgba(213,255,90,.45)}
+  .nav-account-trigger #accountLabel{position:absolute;right:calc(100% + .7rem);top:50%;transform:translateY(-50%) translateX(5px);opacity:0;max-width:0;overflow:hidden;padding:0;border:1px solid transparent;border-radius:6px;background:rgba(3,16,8,.96);color:var(--text);box-shadow:0 0 18px rgba(57,255,20,.18);transition:opacity .25s ease,transform .25s ease,max-width .25s ease,padding .25s ease}
+  .nav-account:hover .nav-account-trigger #accountLabel{opacity:1;max-width:180px;padding:.55rem .75rem;transform:translateY(-50%) translateX(0);border-color:var(--border)}
+  .nav-account-menu{display:grid!important;opacity:0;visibility:hidden;transform:translateY(-6px) scale(.97);transform-origin:top right;transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
+  .nav-account-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+
+  /* Controles de portada: mismo tamaño y lenguaje visual que las páginas Angular. */
+  .index-brand {
+    position:fixed; left:2rem; top:2rem; z-index:260;
+    width:60px; height:60px; display:block; border-radius:50%;
+  }
+  .index-brand img { width:100%; height:100%; display:block; object-fit:cover; border-radius:50%; }
+  .index-brand:hover { animation:logoFloat 1.4s ease-in-out infinite alternate; }
+  [data-theme="light"] .index-brand:hover { animation:logoFloatLight 1.4s ease-in-out infinite alternate; }
+  .nav-account { right:2rem!important; top:2rem!important; }
+  .nav-account-trigger { width:60px!important; height:60px!important; border:2px solid var(--border)!important; background:var(--card)!important; }
+  /* Mismo avatar que EncabezadoComponent en las rutas internas. */
+  .nav-avatar {
+    position:absolute!important;
+    left:50%!important;
+    top:50%!important;
+    transform:translate(-50%,-50%)!important;
+    width:28px!important;
+    height:28px!important;
+    display:grid!important;
+    place-items:center!important;
+    flex:none!important;
+    border-radius:50%!important;
+    background:linear-gradient(135deg,var(--accent),#0c5b23)!important;
+    color:#001b05!important;
+    font:800 .55rem 'Orbitron'!important;
+    line-height:1!important;
+    letter-spacing:0!important;
+    text-align:center!important;
+  }
+  @media (max-width:760px) {
+    .index-brand { left:1rem; top:1rem; width:52px; height:52px; }
+    .nav-account { right:1rem!important; top:1rem!important; }
+    .nav-account-trigger { width:52px!important; height:52px!important; }
+  }
 </style>
 </head>
 <body>
 
 <!-- Circuit BG Canvas -->
 <canvas id="circuit-bg"></canvas>
+
+<!-- Marca fija: la misma referencia visual que usan las rutas internas. -->
+<a class="index-brand" href="#" title="Volver al inicio" aria-label="Volver al inicio">
+  <img src="./media/brand/jemba-tech-logo-circular.png" alt="Jemba Tech">
+</a>
 
 <!-- Nav -->
 <nav id="mainNav"></nav>
@@ -1168,10 +1267,13 @@
 <!-- Contact -->
 <section id="contact">
   <div class="container">
-    <h2 class="section-title">CONTACTO</h2>
-    <div class="divider"></div>
-    <p class="section-sub">ESCRÍBENOS, COTIZA SIN COMPROMISO</p>
-    <div class="contact-grid">
+    <div class="contact-panel">
+      <div class="contact-panel-head">
+        <h2 class="section-title">CONTACTO</h2>
+        <div class="divider"></div>
+        <p class="section-sub">ESCRÍBENOS, COTIZA SIN COMPROMISO</p>
+      </div>
+      <div class="contact-grid">
       <div class="contact-info">
         <h3>INFORMACIÓN</h3>
         <a class="contact-item" href="https://wa.me/56973752851" target="_blank">
@@ -1248,13 +1350,14 @@
           <div id="form-msg"></div>
         </div>
       </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- Footer -->
 <footer>
-  <p>© 2025 <span>Benjamín</span> · Jemba Tech · Santiago / Valparaíso</p>
+  <p>© 2022 Jemba Tech · Santiago / Valparaíso</p>
   <p class="footer-tagline">Tu solución tecnológica, a un clic de distancia.</p>
 </footer>
 
@@ -1495,6 +1598,19 @@ if (!mainNav.querySelector('.nav-logo')) {
   });
 }
 
+// ─── ACCOUNT MENU ───
+const accountWrap = document.createElement('div');
+accountWrap.className = 'nav-account';
+accountWrap.innerHTML = `<button class="nav-account-trigger" id="accountTrigger" type="button"><span class="nav-avatar" id="navAvatar">?</span><span id="accountLabel">INICIAR SESIÓN</span></button><div class="nav-account-menu" id="accountMenu"><button type="button" data-account="profile">PERFIL</button><button type="button" data-account="quotes">MIS COTIZACIONES</button><button type="button" data-account="consultations">CONSULTAS</button><button type="button" data-account="admin" id="adminMenuItem">CLIENTES</button><button type="button" data-account="logout">CERRAR SESIÓN</button></div>`;
+document.body.appendChild(accountWrap);
+const accountTrigger=document.getElementById('accountTrigger'); const accountMenu=document.getElementById('accountMenu'); const accountLabel=document.getElementById('accountLabel'); const navAvatar=document.getElementById('navAvatar');
+const accountUser=()=>{try{return JSON.parse(localStorage.getItem('jembatech_user')||'null')}catch{return null}};
+const refreshAccount=()=>{const user=accountUser();const adminItem=document.getElementById('adminMenuItem');if(user){accountLabel.textContent=user.name.toUpperCase();navAvatar.textContent=user.role==='ADMIN'?'AD':(user.name||user.email||'?').slice(0,2).toUpperCase();navAvatar.classList.toggle('admin-avatar',user.role==='ADMIN');if(adminItem)adminItem.style.display=user.role==='ADMIN'?'block':'none';}else{accountLabel.textContent='INICIAR SESIÓN';navAvatar.textContent='?';navAvatar.classList.remove('admin-avatar');if(adminItem)adminItem.style.display='none';}};
+refreshAccount();
+accountTrigger?.addEventListener('click',()=>{const user=accountUser();if(!user){window.location.assign('/login');return;}accountMenu?.classList.toggle('open');});
+accountMenu?.addEventListener('click',(event)=>{const button=event.target.closest('button');if(!button)return;const section=button.dataset.account;accountMenu?.classList.remove('open');if(section==='logout'){localStorage.removeItem('jembatech_access_token');localStorage.removeItem('jembatech_user');window.location.assign('/login');return;}const routes={profile:'/perfil',quotes:'/cotizaciones',consultations:'/consultas',admin:'/admin/cotizaciones-clientes'};window.location.assign(routes[section]||'/perfil');});
+window.addEventListener('jembatech-auth-change',refreshAccount);
+
 // ─── SIDEBAR MENU ─── 
 // Los links del sidebar usan href nativos, no se necesita JS adicional
 
@@ -1509,6 +1625,7 @@ themeFab.addEventListener('click', () => {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('jembatech-tema', next);
   init();
 
   // Contador easter egg

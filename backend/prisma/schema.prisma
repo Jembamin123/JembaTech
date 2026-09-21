@@ -7,8 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  CLIENT
+  ADMIN
+}
+
+enum QuoteStatus {
+  DRAFT
+  REQUESTED
+  REVIEWING
+  SCHEDULED
+  COMPLETED
+  EXPIRED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  phone        String?
+  role         Role     @default(CLIENT)
+  createdAt    DateTime @default(now()) @map("created_at")
+  quotes       Quote[]
+
+  @@map("users")
+}
+
 model Quote {
   id                        String   @id @default(uuid())
+  userId                    String?  @map("user_id")
+  user                      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   intendedUse               String   @map("intended_use")
   budget                    Int
   totalPrice                Int      @map("total_price")
@@ -21,8 +50,17 @@ model Quote {
   warnings                  Json
   recommendations           Json
   explanation               String
+  status                    QuoteStatus @default(DRAFT)
+  contactPhone              String?  @map("contact_phone")
+  serviceAddress            String?  @map("service_address")
+  preferredDate             DateTime? @map("preferred_date")
+  customerNote              String?  @map("customer_note")
+  adminNote                 String?  @map("admin_note")
   createdAt                 DateTime @default(now()) @map("created_at")
+  updatedAt                 DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([status])
   @@map("quotes")
 }

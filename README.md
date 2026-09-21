@@ -1,4 +1,4 @@
-# Jemba Cotiza
+# JembaTech
 
 Aplicacion multiplataforma para crear cotizaciones de PC, elegir presets y recibir una evaluacion explicable de compatibilidad, rendimiento esperado y ajuste al presupuesto.
 
@@ -21,13 +21,25 @@ Frontend (4200) -> NestJS (3000) -> PostgreSQL (5432)
 
 ## Primer flujo demostrable
 
-1. La persona selecciona un preset o define su uso y presupuesto.
-2. Angular envia la solicitud a NestJS.
-3. NestJS consulta FastAPI para obtener el puntaje y luego persiste el resultado en PostgreSQL.
-4. FastAPI retorna puntaje, advertencias y explicacion.
-5. NestJS entrega el resultado al frontend y conserva un historial de las ultimas cotizaciones.
+1. La persona crea una cuenta o inicia sesion como cliente.
+2. Selecciona componentes compatibles y solicita la evaluacion.
+3. Angular envia la solicitud autenticada a NestJS.
+4. NestJS consulta FastAPI para obtener el puntaje y luego persiste la cotizacion privada en PostgreSQL.
+5. La persona puede solicitar coordinacion; JembaTech gestiona el estado y el cierre se realiza por WhatsApp.
 
 La integracion con SoloTodo e Instagram se incorpora en EP2 mediante mecanismos autorizados; no se hara scraping sin validar condiciones de uso.
+
+## Navegacion y roles del frontend
+
+Angular Router separa las vistas en componentes cargados de forma diferida y un `PortalLayoutComponent` reutilizable conserva logo, navegacion lateral, tema y acceso a WhatsApp.
+
+- `/login`: acceso y registro publico.
+- `/perfil`: datos personales y cambio seguro de contrasena; requiere sesion.
+- `/cotizaciones`: historial privado del cliente; requiere sesion.
+- `/consultas`: seguimiento de coordinaciones; requiere sesion.
+- `/admin/cotizaciones-clientes`: gestion de cotizaciones recibidas; requiere rol `ADMIN`.
+
+Los guards del frontend mejoran la experiencia de navegacion. La autorizacion efectiva se valida nuevamente en NestJS, por lo que ocultar una opcion en la interfaz no reemplaza la seguridad del backend.
 
 ## Requisitos
 
@@ -38,7 +50,7 @@ La integracion con SoloTodo e Instagram se incorpora en EP2 mediante mecanismos 
 
 ## Ejecutar con Docker Compose
 
-1. Copia `.env.example` como `.env` y cambia la contrasena local de PostgreSQL.
+1. Copia `.env.example` como `.env`, cambia la contrasena local y define una clave aleatoria larga para `JWT_SECRET`.
 2. Ejecuta:
 
 ```bash
@@ -53,11 +65,16 @@ Para detener el ambiente:
 docker compose down
 ```
 
-## Endpoints iniciales
+## Endpoints principales
 
 - `GET /api/health`: estado de NestJS.
-- `POST /api/evaluations`: recibe presupuesto, uso, RAM, almacenamiento y consumo; NestJS delega el puntaje a FastAPI.
-- `GET /api/quotes`: devuelve las ultimas 20 cotizaciones persistidas en PostgreSQL.
+- `POST /api/auth/register` y `POST /api/auth/login`: crean una cuenta o emiten una sesion JWT.
+- `GET /api/auth/me`: devuelve el perfil autenticado.
+- `PATCH /api/auth/me`: actualiza nombre, telefono o contrasena validando primero la contrasena actual.
+- `POST /api/evaluations`: recibe presupuesto, uso, RAM, almacenamiento y consumo; exige sesion y guarda la cotizacion del cliente.
+- `GET /api/quotes`: devuelve el historial privado del cliente; un `ADMIN` ve las cotizaciones recibidas.
+- `PATCH /api/quotes/:id/request`: el cliente solicita coordinacion y agrega datos de contacto.
+- `PATCH /api/quotes/:id/coordination`: un `ADMIN` actualiza estado, fecha y nota interna.
 - `GET /health` en el puerto 8000: estado de FastAPI.
 - `POST /evaluate` en el puerto 8000: evaluacion interna de una configuracion.
 
@@ -75,11 +92,11 @@ El workflow [CI EP1](.github/workflows/ci.yml) construye Angular, NestJS y FastA
 
 ## Variables y secretos
 
-Los ejemplos de configuracion estan en `.env.example`, `backend/.env.example`, `python-service/.env.example` y `frontend/.env.example`. Los valores reales no se versionan. En GitHub Actions, los valores sensibles se agregaran como **Secrets** y los no sensibles como **Variables**.
+Los ejemplos de configuracion estan en `.env.example`, `python-service/.env.example` y `frontend/.env.example`. Los valores reales no se versionan. En GitHub Actions, los valores sensibles se agregaran como **Secrets** y los no sensibles como **Variables**.
 
 ## Alcance y limitaciones de EP1
 
-Esta primera entrega demuestra la arquitectura, el flujo Angular-NestJS-FastAPI, PostgreSQL con Prisma y migraciones, contenerizacion, pipeline y Terraform preliminar. Aun faltan autenticacion/autorizacion, PWA/Capacitor, fuente web autorizada y despliegue cloud; se implementaran incrementalmente en las siguientes etapas.
+Esta primera entrega demuestra la arquitectura, autenticacion JWT y roles, el flujo Angular-NestJS-FastAPI, PostgreSQL con Prisma y migraciones, contenerizacion, pipeline y Terraform preliminar. Aun faltan PWA/Capacitor, fuente web autorizada y despliegue cloud; se implementaran incrementalmente en las siguientes etapas.
 
 ## Prototipo y fuentes web
 

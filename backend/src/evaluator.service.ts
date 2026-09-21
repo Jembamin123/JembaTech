@@ -14,6 +14,7 @@ interface EvaluationPayload {
 }
 
 export interface EvaluationResponse {
+  quoteId?: string;
   score: number;
   level: string;
   warnings: string[];
@@ -25,7 +26,7 @@ export interface EvaluationResponse {
 export class EvaluatorService {
   constructor(private readonly http: HttpService, private readonly prisma: PrismaService) {}
 
-  async evaluate(payload: EvaluationPayload) {
+  async evaluate(payload: EvaluationPayload, userId?: string) {
     let evaluation: EvaluationResponse;
     try {
       const response = await firstValueFrom(this.http.post<EvaluationResponse>(`${process.env.PYTHON_SERVICE_URL ?? 'http://localhost:8000'}/evaluate`, payload, { timeout: 4000 }));
@@ -35,7 +36,7 @@ export class EvaluatorService {
     }
 
     try {
-      await this.prisma.quote.create({
+      const quote = await this.prisma.quote.create({
         data: {
           intendedUse: payload.intended_use,
           budget: payload.budget,
@@ -44,9 +45,11 @@ export class EvaluatorService {
           storageGb: payload.storage_gb,
           psuWatts: payload.psu_watts,
           estimatedConsumptionWatts: payload.estimated_consumption_watts,
+          ...(userId ? { user: { connect: { id: userId } } } : {}),
           ...evaluation,
         },
       });
+      evaluation.quoteId = quote.id;
     } catch {
       throw new ServiceUnavailableException('No fue posible guardar la cotizacion en PostgreSQL.');
     }

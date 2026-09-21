@@ -1,0 +1,55 @@
+<section class="page narrow">
+  <small class="eyebrow">CUENTA JEMBATECH</small>
+  <h1>{{ modo === "login" ? "INICIA SESIÓN" : "CREA TU CUENTA" }}</h1>
+  <p class="lead">
+    Guarda tus armados y coordina el servicio directamente con JembaTech.
+  </p>
+  <div class="card">
+    <form (ngSubmit)="enviar()">
+      <input
+        *ngIf="modo === 'registro'"
+        [(ngModel)]="nombre"
+        name="nombre"
+        placeholder="Tu nombre"
+        required
+      /><input
+        [(ngModel)]="correo"
+        name="correo"
+        type="email"
+        placeholder="Correo"
+        required
+      /><input
+        [(ngModel)]="contrasena"
+        name="contrasena"
+        type="password"
+        minlength="8"
+        placeholder="Contraseña"
+        required
+      /><input
+        *ngIf="modo === 'registro'"
+        [(ngModel)]="telefono"
+        name="telefono"
+        type="tel"
+        minlength="8"
+        placeholder="WhatsApp"
+        required
+      /><button type="submit" [disabled]="cargando">
+        {{
+          cargando
+            ? "CARGANDO..."
+            : modo === "login"
+              ? "INGRESAR"
+              : "CREAR CUENTA"
+        }}
+      </button>
+    </form>
+    <p class="error" *ngIf="error">{{ error }}</p>
+    <button
+      class="switch secondary"
+      type="button"
+      (click)="modo = modo === 'login' ? 'registro' : 'login'; error = ''"
+    >
+      {{ modo === "login" ? "CREAR CUENTA" : "YA TENGO CUENTA" }}
+    </button>
+  </div>
+</section>

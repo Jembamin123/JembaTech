@@ -38,6 +38,7 @@ services:
     build: ./backend
     environment:
       PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET in .env before starting Docker Compose}
       DATABASE_URL: postgresql://jemba:${POSTGRES_PASSWORD:-jemba_dev}@database:5432/jemba_cotiza
       PYTHON_SERVICE_URL: http://python-service:8000
     depends_on:

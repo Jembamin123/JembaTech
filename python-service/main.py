@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-app = FastAPI(title='Jemba Cotiza Evaluator', version='0.1.0')
+app = FastAPI(title='JembaTech Evaluator', version='0.1.0')
 
 
 class BuildRequest(BaseModel):

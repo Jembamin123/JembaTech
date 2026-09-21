@@ -1,0 +1,51 @@
+<section class="page">
+  <small class="eyebrow">COORDINACIÓN</small>
+  <h1>MIS CONSULTAS</h1>
+  <p class="lead">
+    Seguimiento de solicitudes enviadas a JembaTech. La conversación final
+    continúa por WhatsApp.
+  </p>
+  <p *ngIf="cargando">Cargando...</p>
+  <p class="empty" *ngIf="!cargando && !cotizaciones.length">
+    Todavía no tienes solicitudes de coordinación.
+  </p>
+  <div class="list">
+    <article class="quote" *ngFor="let cotizacion of cotizaciones">
+      <header>
+        <div>
+          <b>{{ estado(cotizacion.status) }}</b>
+          <p class="meta">
+            Solicitud {{ cotizacion.createdAt | date: "dd/MM/yyyy HH:mm" }}
+          </p>
+        </div>
+        <strong>{{ dinero(cotizacion.totalPrice) }}</strong>
+      </header>
+      <div class="tags">
+        <span>{{
+          cotizacion.preferredDate
+            ? (cotizacion.preferredDate | date: "dd/MM/yyyy HH:mm")
+            : "FECHA POR DEFINIR"
+        }}</span
+        ><span>{{ cotizacion.serviceAddress || "UBICACIÓN POR DEFINIR" }}</span>
+      </div>
+      <p class="meta">
+        {{
+          cotizacion.adminNote ||
+            "JembaTech todavía no ha agregado observaciones."
+        }}
+      </p>
+      <div class="actions">
+        <a
+          class="button"
+          [href]="
+            'https://wa.me/56973752851?text=Hola%20JembaTech,%20consulto%20por%20mi%20cotización%20' +
+            cotizacion.id
+          "
+          target="_blank"
+          rel="noopener"
+          >CONTINUAR POR WHATSAPP</a
+        >
+      </div>
+    </article>
+  </div>
+</section>

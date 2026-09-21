@@ -1,0 +1,183 @@
+.marca {
+  position: fixed;
+  left: 2rem;
+  top: 2rem;
+  z-index: 50;
+  width: 60px;
+  height: 60px;
+  display: block;
+  border-radius: 50%;
+  text-decoration: none;
+  transition:
+    transform 0.25s,
+    filter 0.25s;
+}
+.marca:hover {
+  animation: marcaFlotante 1.4s ease-in-out infinite alternate;
+}
+.marca img {
+  width: 60px;
+  height: 60px;
+  display: block;
+  object-fit: cover;
+  border-radius: 50%;
+}
+@keyframes marcaFlotante {
+  0% {
+    transform: scale(1) rotate(0deg) translateY(0);
+    filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.7));
+  }
+  50% {
+    transform: scale(1.08) rotate(5deg) translateY(-3px);
+    filter: drop-shadow(0 0 22px rgba(57, 255, 20, 1));
+  }
+  100% {
+    transform: scale(1.04) rotate(-3deg) translateY(1px);
+    filter: drop-shadow(0 0 14px rgba(57, 255, 20, 0.85));
+  }
+}
+:host-context([data-theme="light"]) .marca:hover {
+  animation-name: marcaFlotanteCeleste;
+}
+@keyframes marcaFlotanteCeleste {
+  0% {
+    transform: scale(1) rotate(0deg) translateY(0);
+    filter: drop-shadow(0 0 8px rgba(0, 255, 224, 0.7));
+  }
+  50% {
+    transform: scale(1.08) rotate(5deg) translateY(-3px);
+    filter: drop-shadow(0 0 22px rgba(0, 255, 224, 1));
+  }
+  100% {
+    transform: scale(1.04) rotate(-3deg) translateY(1px);
+    filter: drop-shadow(0 0 14px rgba(0, 255, 224, 0.85));
+  }
+}
+.cuenta {
+  position: fixed;
+  right: 2rem;
+  top: 2rem;
+  z-index: 50;
+}
+.activador {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(57, 255, 20, 0.2);
+  transition:
+    transform 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+.activador:hover {
+  transform: scale(1.08);
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+.avatar {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #0c5b23);
+  color: #001b05;
+  font: 800 0.55rem "Orbitron";
+  line-height: 1;
+}
+.avatar.admin {
+  background: linear-gradient(135deg, #d5ff5a, var(--accent));
+  box-shadow: 0 0 12px rgba(213, 255, 90, 0.45);
+}
+.etiqueta {
+  position: absolute;
+  right: calc(100% + 0.7rem);
+  top: 50%;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-50%) translateX(5px);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: rgba(3, 16, 8, 0.96);
+  color: var(--text);
+  font: 600 0.52rem "Orbitron";
+  letter-spacing: 1px;
+  white-space: nowrap;
+  transition: 0.25s;
+}
+.cuenta:hover .etiqueta {
+  max-width: 190px;
+  opacity: 1;
+  transform: translateY(-50%);
+  padding: 0.55rem 0.75rem;
+  border-color: var(--border);
+}
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.6rem);
+  width: 220px;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(3, 16, 8, 0.97);
+  box-shadow: var(--glow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.97);
+  transition: 0.2s;
+}
+.menu.abierto {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.menu a,
+.menu button {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  padding: 0.65rem 0.7rem;
+  cursor: pointer;
+  font: 600 0.52rem "Orbitron";
+  letter-spacing: 1px;
+}
+.menu a:hover,
+.menu button:hover {
+  color: var(--accent);
+  background: rgba(57, 255, 20, 0.08);
+}
+@media (max-width: 760px) {
+  .marca {
+    left: 1rem;
+    top: 1rem;
+    width: 52px;
+    height: 52px;
+  }
+  .marca img {
+    width: 52px;
+    height: 52px;
+  }
+  .cuenta {
+    right: 1rem;
+    top: 1rem;
+  }
+  .activador {
+    width: 52px;
+    height: 52px;
+  }
+}

@@ -1,0 +1,34 @@
+<section class="page">
+  <small class="eyebrow">HISTORIAL PERSONAL</small>
+  <h1>MIS COTIZACIONES</h1>
+  <p class="lead">
+    Tus configuraciones guardadas, evaluaciones y estados de coordinación.
+  </p>
+  <p *ngIf="cargando">Cargando...</p>
+  <p class="empty" *ngIf="!cargando && !cotizaciones.length">
+    Aún no tienes cotizaciones guardadas.
+  </p>
+  <div class="list">
+    <article class="quote" *ngFor="let cotizacion of cotizaciones">
+      <header>
+        <div>
+          <b>{{ cotizacion.level }} · {{ cotizacion.score }}/100</b>
+          <p class="meta">
+            {{ cotizacion.createdAt | date: "dd/MM/yyyy HH:mm" }}
+          </p>
+        </div>
+        <strong>{{ dinero(cotizacion.totalPrice) }}</strong>
+      </header>
+      <div class="tags">
+        <span>{{ estado(cotizacion.status) }}</span
+        ><span>{{ cotizacion.ramGb }} GB RAM</span
+        ><span>{{ cotizacion.storageGb }} GB</span
+        ><span>{{ cotizacion.psuWatts }} W</span>
+      </div>
+      <p class="meta">{{ cotizacion.explanation }}</p>
+      <div class="actions">
+        <a class="button secondary" routerLink="/consultas">VER COORDINACIÓN</a>
+      </div>
+    </article>
+  </div>
+</section>

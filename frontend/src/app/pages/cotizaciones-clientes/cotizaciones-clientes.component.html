@@ -1,0 +1,71 @@
+<section class="page">
+  <small class="eyebrow">ADMINISTRACIÓN</small>
+  <h1>COTIZACIONES DE CLIENTES</h1>
+  <p class="lead">
+    Revisa solicitudes, entrega feedback y coordina el servicio sin convertir la
+    plataforma en un chat.
+  </p>
+  <p *ngIf="cargando">Cargando...</p>
+  <p class="empty" *ngIf="!cargando && !cotizaciones.length">
+    No hay cotizaciones registradas.
+  </p>
+  <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
+  <div class="list">
+    <article class="quote" *ngFor="let cotizacion of cotizaciones">
+      <header>
+        <div>
+          <b>{{ cotizacion.user?.name || "Cliente sin cuenta" }}</b>
+          <p class="meta">
+            {{ cotizacion.user?.email || "Sin correo" }} ·
+            {{
+              cotizacion.user?.phone ||
+                cotizacion.contactPhone ||
+                "Sin teléfono"
+            }}
+          </p>
+        </div>
+        <strong>{{ dinero(cotizacion.totalPrice) }}</strong>
+      </header>
+      <div class="tags">
+        <span>{{ cotizacion.level }} · {{ cotizacion.score }}/100</span
+        ><span>{{ cotizacion.ramGb }} GB RAM</span
+        ><span>{{ cotizacion.storageGb }} GB</span
+        ><span>{{ cotizacion.createdAt | date: "dd/MM/yyyy HH:mm" }}</span>
+      </div>
+      <textarea
+        class="admin-note"
+        [(ngModel)]="cotizacion.adminNote"
+        placeholder="Feedback o indicaciones para el cliente"
+      ></textarea>
+      <div class="profile-grid">
+        <select [(ngModel)]="cotizacion.status">
+          <option value="DRAFT">BORRADOR</option>
+          <option value="REQUESTED">SOLICITADA</option>
+          <option value="REVIEWING">EN REVISIÓN</option>
+          <option value="SCHEDULED">AGENDADA</option>
+          <option value="COMPLETED">COMPLETADA</option>
+          <option value="EXPIRED">CERRADA</option></select
+        ><input [(ngModel)]="cotizacion.preferredDate" type="datetime-local" />
+      </div>
+      <div class="actions">
+        <button
+          type="button"
+          [disabled]="guardandoId === cotizacion.id"
+          (click)="guardar(cotizacion)"
+        >
+          {{
+            guardandoId === cotizacion.id
+              ? "GUARDANDO..."
+              : "GUARDAR ACTUALIZACIÓN"
+          }}</button
+        ><a
+          class="button secondary"
+          [href]="whatsapp(cotizacion)"
+          target="_blank"
+          rel="noopener"
+          >CONTACTAR POR WHATSAPP</a
+        >
+      </div>
+    </article>
+  </div>
+</section>

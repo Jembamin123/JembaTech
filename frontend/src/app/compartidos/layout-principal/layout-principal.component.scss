@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+.layout-principal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: auto;
+  background: var(--bg);
+  color: var(--text);
+}
+.contenido {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 7rem 3rem 5rem 6.5rem;
+}
+@media (max-width: 760px) {
+  .contenido {
+    padding: 5.8rem 1rem 8rem;
+  }
+}

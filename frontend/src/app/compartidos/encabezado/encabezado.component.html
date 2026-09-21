@@ -1,0 +1,30 @@
+<a class="marca" href="/" title="Volver al inicio"
+  ><img src="/media/brand/jemba-tech-logo-circular.png" alt="JembaTech"
+/></a>
+<div class="cuenta">
+  <button
+    class="activador"
+    type="button"
+    (click)="alternar()"
+    [attr.aria-expanded]="abierto"
+  >
+    <span class="avatar" [class.admin]="autenticacion.user?.role === 'ADMIN'">{{
+      iniciales
+    }}</span>
+    <span class="etiqueta">{{
+      autenticacion.user?.name || "INICIAR SESIÓN"
+    }}</span>
+  </button>
+  <div class="menu" [class.abierto]="abierto" *ngIf="autenticacion.user">
+    <a routerLink="/perfil" (click)="abierto = false">PERFIL</a>
+    <a routerLink="/cotizaciones" (click)="abierto = false">MIS COTIZACIONES</a>
+    <a routerLink="/consultas" (click)="abierto = false">CONSULTAS</a>
+    <a
+      *ngIf="autenticacion.user?.role === 'ADMIN'"
+      routerLink="/admin/cotizaciones-clientes"
+      (click)="abierto = false"
+      >COTIZACIONES DE CLIENTES</a
+    >
+    <button type="button" (click)="salir()">CERRAR SESIÓN</button>
+  </div>
+</div>

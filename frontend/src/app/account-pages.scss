@@ -1,0 +1,269 @@
+:host ::ng-deep body.account-page > section,
+:host ::ng-deep body.account-page > header,
+:host ::ng-deep body.account-page > .hero,
+:host ::ng-deep body.account-page > #services,
+:host ::ng-deep body.account-page > #why,
+:host ::ng-deep body.account-page > #gallery,
+:host ::ng-deep body.account-page > #contact {
+  display: none !important;
+}
+.account-page-shell ~ .account-screen,
+.account-page-shell ~ .quote-section {
+  display: none !important;
+}
+.account-page-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 245;
+  overflow: auto;
+  padding: 5.5rem 4rem 3rem 5.5rem;
+  background:
+    radial-gradient(
+      circle at 70% 18%,
+      rgba(57, 255, 20, 0.08),
+      transparent 30%
+    ),
+    var(--bg);
+  color: var(--text);
+  animation: accountPageIn 0.35s ease both;
+}
+.account-page-header {
+  position: fixed;
+  left: 5.5rem;
+  right: 1.8rem;
+  top: 1.35rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(1, 10, 4, 0.75);
+  backdrop-filter: blur(14px);
+}
+.account-page-header small {
+  display: block;
+  color: var(--accent);
+  font: 600 0.5rem "Orbitron";
+  letter-spacing: 2px;
+}
+.account-page-header strong {
+  display: block;
+  color: var(--text);
+  font: 700 0.85rem "Orbitron";
+  letter-spacing: 1px;
+}
+.page-back {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent);
+  padding: 0.6rem 0.8rem;
+  font: 600 0.55rem "Orbitron";
+  cursor: pointer;
+}
+.page-back:hover {
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+.account-page-user {
+  margin-left: auto;
+  color: var(--muted);
+  font: 600 0.58rem "Orbitron";
+  letter-spacing: 1px;
+}
+.account-page-content {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+}
+.account-page-card {
+  width: min(520px, 100%);
+  margin: 2rem auto;
+  padding: 2.4rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    145deg,
+    rgba(9, 32, 15, 0.92),
+    rgba(2, 12, 6, 0.84)
+  );
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  animation: cardRise 0.4s ease both;
+}
+.account-page-card.wide-card,
+.account-page-card.admin-card {
+  width: min(1080px, 100%);
+}
+.account-page-card h1 {
+  margin: 0.7rem 0;
+  color: var(--text);
+  font: 800 clamp(1.4rem, 3vw, 2.2rem) "Orbitron";
+  letter-spacing: 1px;
+}
+.account-page-card > p {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.account-page-card form {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.account-page-card input,
+.admin-quote textarea,
+.admin-actions select {
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--text);
+  padding: 0.85rem;
+  font: 400 0.8rem "Exo 2";
+  outline: none;
+}
+.account-page-card input:focus,
+.admin-quote textarea:focus,
+.admin-actions select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.12);
+}
+.account-page-card form .next {
+  margin: 0;
+}
+.profile-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.profile-actions .next {
+  margin: 0;
+}
+.detail-quote {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+.detail-quote div {
+  display: grid;
+  gap: 0.25rem;
+}
+.detail-quote b {
+  color: var(--accent);
+  font: 600 0.7rem "Orbitron";
+}
+.detail-quote span,
+.detail-quote small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.empty-state {
+  border: 1px dashed var(--border);
+  padding: 1.2rem;
+  text-align: center;
+}
+.admin-quote {
+  margin-top: 1rem;
+  padding: 1.2rem;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+  animation: cardRise 0.35s ease both;
+}
+.admin-quote header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+.admin-quote header b {
+  display: block;
+  color: var(--text);
+  font: 700 0.78rem "Orbitron";
+}
+.admin-quote header small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
+.admin-quote header strong {
+  color: var(--accent);
+  font: 700 0.9rem "Orbitron";
+}
+.admin-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.admin-meta span {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font: 600 0.52rem "Orbitron";
+}
+.admin-quote textarea {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+}
+.admin-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+.admin-actions select {
+  padding: 0.7rem;
+}
+.admin-actions .next {
+  margin: 0;
+}
+.admin-actions .whatsapp {
+  color: var(--accent);
+  text-decoration: none;
+}
+.admin-actions .whatsapp:hover {
+  box-shadow: var(--glow);
+}
+@keyframes accountPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 760px) {
+  .account-page-shell {
+    padding: 5.4rem 1rem 2rem 1rem;
+  }
+  .account-page-header {
+    left: 1rem;
+    right: 1rem;
+  }
+  .account-page-user {
+    display: none;
+  }
+  .account-page-card {
+    padding: 1.4rem;
+  }
+  .detail-quote {
+    grid-template-columns: 1fr;
+  }
+  .admin-actions {
+    align-items: stretch;
+  }
+  .admin-actions > * {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -1,0 +1,52 @@
+<section class="page narrow">
+  <small class="eyebrow">PERFIL DE USUARIO</small>
+  <h1>{{ autenticacion.user?.name | uppercase }}</h1>
+  <p class="lead">
+    {{ autenticacion.user?.email }} · ROL {{ autenticacion.user?.role }}
+  </p>
+  <div class="card">
+    <form (ngSubmit)="guardar()">
+      <div class="profile-grid">
+        <input
+          [(ngModel)]="nombre"
+          name="nombre"
+          placeholder="Nombre visible"
+          required
+        /><input
+          [(ngModel)]="telefono"
+          name="telefono"
+          type="tel"
+          placeholder="WhatsApp"
+          required
+        />
+      </div>
+      <input
+        [(ngModel)]="contrasenaActual"
+        name="contrasenaActual"
+        type="password"
+        minlength="8"
+        placeholder="Contraseña actual (obligatoria)"
+        required
+      /><input
+        [(ngModel)]="contrasenaNueva"
+        name="contrasenaNueva"
+        type="password"
+        minlength="8"
+        placeholder="Nueva contraseña (opcional)"
+      /><button type="submit" [disabled]="cargando">
+        {{ cargando ? "GUARDANDO..." : "GUARDAR CAMBIOS" }}
+      </button>
+    </form>
+    <p class="error" *ngIf="error">{{ error }}</p>
+    <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
+    <div class="actions">
+      <a class="button secondary" routerLink="/cotizaciones">MIS COTIZACIONES</a
+      ><a
+        *ngIf="autenticacion.user?.role === 'ADMIN'"
+        class="button secondary"
+        routerLink="/admin/cotizaciones-clientes"
+        >COTIZACIONES DE CLIENTES</a
+      >
+    </div>
+  </div>
+</section>
