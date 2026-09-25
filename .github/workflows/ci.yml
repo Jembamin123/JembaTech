@@ -47,14 +47,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - uses: gitleaks/gitleaks-action@v2
+      - name: Analizar secretos expuestos
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --results=verified,unknown
   terraform:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: infra } }
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-        with: { terraform_version: '1.6.0' }
+      - uses: hashicorp/setup-terraform@v4
+        with: { terraform_version: '1.16.4' }
       - run: terraform init -backend=false
       - run: terraform fmt -check
       - run: terraform validate
