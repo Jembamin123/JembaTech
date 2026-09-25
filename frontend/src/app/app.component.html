@@ -718,26 +718,31 @@
               Deja los datos mínimos. La coordinación final se hará directamente
               por WhatsApp.
             </p>
-            <div class="coordination-grid">
+            <form
+              [formGroup]="formularioCoordinacion"
+              (ngSubmit)="requestCoordination()"
+              novalidate
+            >
+              <div class="coordination-grid">
               <input
-                [(ngModel)]="contactPhone"
+                formControlName="contactPhone"
                 placeholder="WhatsApp de contacto"
               /><input
-                [(ngModel)]="preferredDate"
+                formControlName="preferredDate"
                 type="datetime-local"
               /><input
-                [(ngModel)]="serviceAddress"
+                formControlName="serviceAddress"
                 placeholder="Comuna o dirección (opcional)"
               /><textarea
-                [(ngModel)]="customerNote"
+                formControlName="customerNote"
                 placeholder="Cuéntanos qué necesitas: armado, visita técnica, dudas..."
               ></textarea>
-            </div>
-            <div class="coordination-actions">
+              </div>
+              <div class="coordination-actions">
               <button
                 class="next"
+                type="submit"
                 [disabled]="coordinationLoading"
-                (click)="requestCoordination()"
               >
                 {{
                   coordinationLoading ? "ENVIANDO..." : "ENVIAR SOLICITUD"
@@ -747,9 +752,9 @@
                 [href]="whatsappLink()"
                 target="_blank"
                 rel="noopener"
-                >ABRIR RESUMEN EN WHATSAPP ↗</a
-              >
-            </div>
+                >ABRIR RESUMEN EN WHATSAPP ↗</a>
+              </div>
+            </form>
             <p class="coordination-message" *ngIf="coordinationMessage">
               {{ coordinationMessage }}
             </p>

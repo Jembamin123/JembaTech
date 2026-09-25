@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { AuthService } from "../../servicios/autenticacion.service";
 import { QuoteService } from "../../servicios/cotizaciones.service";
 @Component({
   selector: "app-cotizaciones",
@@ -11,12 +10,11 @@ import { QuoteService } from "../../servicios/cotizaciones.service";
   styleUrl: "../../estilos/paginas.scss",
 })
 export class CotizacionesComponent implements OnInit {
-  private readonly autenticacion = inject(AuthService);
   private readonly servicio = inject(QuoteService);
   cotizaciones: any[] = [];
   cargando = true;
   ngOnInit() {
-    this.servicio.list(this.autenticacion.token()).subscribe({
+    this.servicio.list().subscribe({
       next: (datos) => {
         this.cotizaciones = datos;
         this.cargando = false;

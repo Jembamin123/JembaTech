@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AuthService } from "../../servicios/autenticacion.service";
 import { QuoteService } from "../../servicios/cotizaciones.service";
 @Component({
   selector: "app-cotizaciones-clientes",
@@ -11,7 +10,6 @@ import { QuoteService } from "../../servicios/cotizaciones.service";
   styleUrl: "../../estilos/paginas.scss",
 })
 export class CotizacionesClientesComponent implements OnInit {
-  private readonly autenticacion = inject(AuthService);
   private readonly servicio = inject(QuoteService);
   cotizaciones: any[] = [];
   cargando = true;
@@ -22,7 +20,7 @@ export class CotizacionesClientesComponent implements OnInit {
   }
   recargar() {
     this.cargando = true;
-    this.servicio.list(this.autenticacion.token()).subscribe({
+    this.servicio.list().subscribe({
       next: (datos) => {
         this.cotizaciones = datos;
         this.cargando = false;
@@ -41,7 +39,6 @@ export class CotizacionesClientesComponent implements OnInit {
           adminNote: cotizacion.adminNote,
           preferredDate: cotizacion.preferredDate || undefined,
         },
-        this.autenticacion.token(),
       )
       .subscribe({
         next: () => {

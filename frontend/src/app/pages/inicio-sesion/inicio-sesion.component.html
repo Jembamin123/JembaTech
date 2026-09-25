@@ -5,34 +5,24 @@
     Guarda tus armados y coordina el servicio directamente con JembaTech.
   </p>
   <div class="card">
-    <form (ngSubmit)="enviar()">
+    <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
       <input
         *ngIf="modo === 'registro'"
-        [(ngModel)]="nombre"
-        name="nombre"
+        formControlName="nombre"
         placeholder="Tu nombre"
-        required
       /><input
-        [(ngModel)]="correo"
-        name="correo"
+        formControlName="correo"
         type="email"
         placeholder="Correo"
-        required
       /><input
-        [(ngModel)]="contrasena"
-        name="contrasena"
+        formControlName="contrasena"
         type="password"
-        minlength="8"
         placeholder="Contraseña"
-        required
       /><input
         *ngIf="modo === 'registro'"
-        [(ngModel)]="telefono"
-        name="telefono"
+        formControlName="telefono"
         type="tel"
-        minlength="8"
         placeholder="WhatsApp"
-        required
       /><button type="submit" [disabled]="cargando">
         {{
           cargando
@@ -47,7 +37,7 @@
     <button
       class="switch secondary"
       type="button"
-      (click)="modo = modo === 'login' ? 'registro' : 'login'; error = ''"
+      (click)="cambiarModo()"
     >
       {{ modo === "login" ? "CREAR CUENTA" : "YA TENGO CUENTA" }}
     </button>

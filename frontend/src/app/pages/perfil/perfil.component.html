@@ -5,33 +5,24 @@
     {{ autenticacion.user?.email }} · ROL {{ autenticacion.user?.role }}
   </p>
   <div class="card">
-    <form (ngSubmit)="guardar()">
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
       <div class="profile-grid">
         <input
-          [(ngModel)]="nombre"
-          name="nombre"
+          formControlName="nombre"
           placeholder="Nombre visible"
-          required
         /><input
-          [(ngModel)]="telefono"
-          name="telefono"
+          formControlName="telefono"
           type="tel"
           placeholder="WhatsApp"
-          required
         />
       </div>
       <input
-        [(ngModel)]="contrasenaActual"
-        name="contrasenaActual"
+        formControlName="contrasenaActual"
         type="password"
-        minlength="8"
         placeholder="Contraseña actual (obligatoria)"
-        required
       /><input
-        [(ngModel)]="contrasenaNueva"
-        name="contrasenaNueva"
+        formControlName="contrasenaNueva"
         type="password"
-        minlength="8"
         placeholder="Nueva contraseña (opcional)"
       /><button type="submit" [disabled]="cargando">
         {{ cargando ? "GUARDANDO..." : "GUARDAR CAMBIOS" }}

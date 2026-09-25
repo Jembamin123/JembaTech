@@ -11,6 +11,8 @@ Frontend (4200) -> NestJS (3000) -> PostgreSQL (5432)
                            -> FastAPI (8000)
 ```
 
+Documentación de apoyo: [contexto](docs/diagrama-contexto.md), [contenedores](docs/diagrama-contenedores.md), [componentes](docs/diagrama-componentes.md), [modelo de datos](docs/modelo-datos-inicial.md), [despliegue preliminar](docs/despliegue-preliminar.md) y [ADR-001](docs/adr/001-arquitectura-centralizada.md).
+
 ## Carpetas
 
 - `frontend/`: cliente Ionic + Angular.
@@ -41,6 +43,8 @@ Angular Router separa las vistas en componentes cargados de forma diferida y un 
 
 Los guards del frontend mejoran la experiencia de navegacion. La autorizacion efectiva se valida nuevamente en NestJS, por lo que ocultar una opcion en la interfaz no reemplaza la seguridad del backend.
 
+Las solicitudes privadas a `/api` usan `autenticacionInterceptor`: agrega el JWT desde `localStorage` de forma centralizada y, ante una respuesta `401`, elimina la sesión local y redirige a `/login`. Los servicios no construyen cabeceras `Authorization` manualmente.
+
 ## Requisitos
 
 - Docker Desktop con Docker Compose.
@@ -65,9 +69,30 @@ Para detener el ambiente:
 docker compose down
 ```
 
+## Android inicial con Capacitor
+
+El frontend Ionic/Angular tiene Capacitor configurado con el identificador `cl.jembatech.cotizador` y la plataforma Android versionada en `frontend/android/`. Esto permite demostrar la proyección móvil de EP1 sin requerir todavía una APK final.
+
+Para actualizar los recursos web que verá Android:
+
+```bash
+cd frontend
+npm run android:prepare
+```
+
+Para abrir el proyecto nativo se requiere Android Studio instalado:
+
+```bash
+npm run android:open
+```
+
+No se versionan APK, AAB, cachés Gradle ni configuraciones locales del SDK Android.
+
 ## Endpoints principales
 
 - `GET /api/health`: estado de NestJS.
+- `GET /api/docs`: interfaz Swagger/OpenAPI de NestJS.
+- `GET /api/docs-json`: especificación OpenAPI en JSON.
 - `POST /api/auth/register` y `POST /api/auth/login`: crean una cuenta o emiten una sesion JWT.
 - `GET /api/auth/me`: devuelve el perfil autenticado.
 - `PATCH /api/auth/me`: actualiza nombre, telefono o contrasena validando primero la contrasena actual.
@@ -80,6 +105,28 @@ docker compose down
 
 ## Pruebas
 
+Angular ejecuta pruebas con Vitest. La prueba inicial verifica que el interceptor agrega JWT a las rutas privadas y maneja una sesión vencida:
+
+```bash
+cd frontend
+npm test
+```
+
+Los controles estáticos se ejecutan antes de las pruebas en CI:
+
+```bash
+cd frontend && npm run lint
+cd ../backend && npm run lint
+cd ../python-service && python -m ruff check .
+```
+
+NestJS cuenta con pruebas unitarias iniciales para el registro y la prevención de correos duplicados:
+
+```bash
+cd backend
+npm test
+```
+
 ```bash
 cd python-service
 pip install -r requirements.txt -r requirements-dev.txt
@@ -88,7 +135,7 @@ python -m pytest -q
 
 ## Pipeline e infraestructura
 
-El workflow [CI EP1](.github/workflows/ci.yml) construye Angular, NestJS y FastAPI, ejecuta pruebas Python, detecta secretos y construye las tres imagenes Docker. La configuracion inicial de staging y las instrucciones de validacion se encuentran en [`infra/`](infra/README.md).
+El workflow [CI EP1](.github/workflows/ci.yml) construye Angular, NestJS y FastAPI, ejecuta pruebas unitarias de NestJS y FastAPI, detecta secretos, valida Terraform (`fmt`, `validate` y `plan`) y construye las tres imagenes Docker. La configuracion inicial de staging y las instrucciones de validacion se encuentran en [`infra/`](infra/README.md).
 
 ## Variables y secretos
 
@@ -100,4 +147,6 @@ Esta primera entrega demuestra la arquitectura, autenticacion JWT y roles, el fl
 
 ## Prototipo y fuentes web
 
-El prototipo Figma y la fuente web autorizada se definiran y enlazaran antes del cierre de EP1. SoloTodo e Instagram no se consumen en esta etapa para respetar terminos de uso y privacidad.
+El prototipo navegable y los mockups de EP1 estan documentados en [Figma: JembaTech — Mockups EP1](https://www.figma.com/design/kZ1zM9aB2wOM6i9Gmc5U9f/JembaTech---Mockups-EP1?node-id=0-1&t=Z4w9Eb8TDQlvnc7i-1). Incluye el sistema visual, el flujo del cliente y las vistas de inicio, cotizador, acceso, perfil, cotizaciones y coordinacion administrativa.
+
+La fuente propuesta para EP2 es la API oficial de Mercado Libre Chile, bajo sus permisos y términos de desarrollador. [La propuesta de uso responsable](docs/fuente-web-propuesta.md) explica el alcance, la trazabilidad y por qué SoloTodo e Instagram no se consumen automáticamente en EP1.

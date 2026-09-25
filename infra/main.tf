@@ -1,7 +1,11 @@
 terraform {
   required_version = ">= 1.6.0"
+
   required_providers {
-    local = { source = "hashicorp/local", version = "~> 2.5" }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
   }
 }
 
@@ -13,9 +17,9 @@ resource "local_file" "staging_manifest" {
   filename = "${path.module}/generated/staging-manifest.json"
   content = jsonencode({
     environment = var.environment
-    frontend   = var.frontend_url
-    backend    = var.backend_url
-    python     = var.python_service_url
-    database   = "postgresql"
+    frontend    = var.frontend_url
+    backend     = var.backend_url
+    python      = var.python_service_url
+    database    = "postgresql"
   })
 }

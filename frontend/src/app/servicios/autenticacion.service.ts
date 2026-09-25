@@ -38,9 +38,7 @@ export class AuthService {
   }
   updateProfile(data: ProfileUpdate): Observable<Session> {
     return this.http
-      .patch<Session>("/api/auth/me", data, {
-        headers: { Authorization: `Bearer ${this.token()}` },
-      })
+      .patch<Session>("/api/auth/me", data)
       .pipe(tap((s) => this.save(s)));
   }
   token() {

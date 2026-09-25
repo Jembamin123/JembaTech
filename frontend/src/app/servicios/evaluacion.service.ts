@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 export interface EvaluationRequest {
   budget: number;
@@ -21,12 +21,7 @@ export interface EvaluationResult {
 @Injectable({ providedIn: "root" })
 export class EvaluationService {
   constructor(private readonly http: HttpClient) {}
-  evaluate(
-    configuration: EvaluationRequest,
-    token: string,
-  ): Observable<EvaluationResult> {
-    return this.http.post<EvaluationResult>("/api/evaluations", configuration, {
-      headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
-    });
+  evaluate(configuration: EvaluationRequest): Observable<EvaluationResult> {
+    return this.http.post<EvaluationResult>("/api/evaluations", configuration);
   }
 }

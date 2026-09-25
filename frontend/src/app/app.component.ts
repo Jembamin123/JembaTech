@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   EvaluationResult,
   EvaluationService,
@@ -59,7 +59,7 @@ interface CaseChoice extends Choice {
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterOutlet],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss", "./account-pages.scss"],
 })
@@ -67,6 +67,13 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly evaluationService = inject(EvaluationService);
   private readonly authService = inject(AuthService);
   private readonly quoteService = inject(QuoteService);
+  private readonly formularioBuilder = inject(FormBuilder);
+  readonly formularioCoordinacion = this.formularioBuilder.nonNullable.group({
+    contactPhone: ["", [Validators.required, Validators.minLength(8)]],
+    preferredDate: [""],
+    serviceAddress: [""],
+    customerNote: [""],
+  });
   step = 1;
   brand: Brand = "AMD";
   tier: Tier = "Media";
@@ -101,10 +108,6 @@ export class AppComponent implements OnInit, OnDestroy {
   profileError = "";
   profileMessage = "";
   profileSaving = false;
-  contactPhone = "";
-  serviceAddress = "";
-  preferredDate = "";
-  customerNote = "";
   coordinationMessage = "";
   coordinationLoading = false;
   accountOpen = false;
@@ -683,7 +686,7 @@ export class AppComponent implements OnInit, OnDestroy {
   loadQuotes() {
     if (!this.user) return;
     this.quotesLoading = true;
-    this.quoteService.list(this.authService.token()).subscribe({
+    this.quoteService.list().subscribe({
       next: (quotes) => {
         this.quotes = quotes;
         this.quotesLoading = false;
@@ -706,7 +709,6 @@ export class AppComponent implements OnInit, OnDestroy {
           adminNote: this.adminNote,
           preferredDate: quote.preferredDate || undefined,
         },
-        this.authService.token(),
       )
       .subscribe({
         next: (updated) => {
@@ -789,7 +791,6 @@ export class AppComponent implements OnInit, OnDestroy {
           psu_watts: Number(this.psu.id),
           estimated_consumption_watts: this.cpu.power + this.gpu.power + 100,
         },
-        this.authService.token(),
       )
       .subscribe({
         next: (result) => {
@@ -809,22 +810,29 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   requestCoordination() {
     if (!this.evaluation?.quoteId) return;
+    if (this.formularioCoordinacion.invalid) {
+      this.formularioCoordinacion.markAllAsTouched();
+      this.coordinationMessage = "Indica un WhatsApp válido para solicitar la coordinación.";
+      return;
+    }
+
     this.coordinationLoading = true;
     this.coordinationMessage = "";
+    const datos = this.formularioCoordinacion.getRawValue();
     this.quoteService
       .requestCoordination(
         this.evaluation.quoteId,
         {
-          contactPhone: this.contactPhone,
-          serviceAddress: this.serviceAddress,
-          preferredDate: this.preferredDate || undefined,
-          customerNote: this.customerNote,
+          contactPhone: datos.contactPhone,
+          serviceAddress: datos.serviceAddress,
+          preferredDate: datos.preferredDate || undefined,
+          customerNote: datos.customerNote,
         },
-        this.authService.token(),
       )
       .subscribe({
         next: () => {
           this.coordinationLoading = false;
+          this.formularioCoordinacion.reset();
           this.coordinationMessage =
             "Solicitud enviada. JembaTech revisará tu cotización antes de coordinar por WhatsApp.";
         },
